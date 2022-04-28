@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>funds module &mdash; Banor Documents 1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="fund api module" href="fundapi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Banor Documents
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Funds</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="DatafromBBG.html">DatafromBBG module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbgdatafromdb.html">bbgdatafromdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email_send_service.html">email_send_service module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fundapi.html">fund api module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">funds module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run">How to run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-process">The Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-funds">Technical Documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Banor Documents</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">Funds</a> &raquo;</li>
+      <li>funds module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python_script_rst/funds.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="funds-module">
+<h1>funds module<a class="headerlink" href="#funds-module" title="Permalink to this headline"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<p>Using this feature - user can place an order for Buy or Sell Funds. User can perform this action on following funds:</p>
+<ol class="arabic simple">
+<li><p>Italy Long short</p></li>
+<li><p>NorthAmerica Long short</p></li>
+<li><p>GREATERCHINA Long short</p></li>
+<li><p>EUROPEANVALUE Long short</p></li>
+<li><p>CHIRON</p></li>
+<li><p>EUROBOND</p></li>
+<li><p>NEWFRONTIERS</p></li>
+<li><p>ROSEMARY</p></li>
+<li><p>ASIANALPHA</p></li>
+<li><p>HIGHFOCUS</p></li>
+<li><p>MEAOPPORTUNITIES</p></li>
+<li><p>LEVEURO</p></li>
+<li><p>ASIMOCCO</p></li>
+<li><p>RAFFAELLO</p></li>
+</ol>
+<p><strong>The SQL tables which are updated:</strong></p>
+<ul class="simple">
+<li><p>OSUSR_38P_ORDERS</p></li>
+<li><p>Funds tabel (i.e OSUSR_38P_NORTHAMERICALS,OSUSR_38P_ITALYLS and so on)</p></li>
+<li><p>OSUSR_SKP_ORDERCHANGES</p></li>
+</ul>
+</section>
+<section id="how-to-run">
+<h2>How to run<a class="headerlink" href="#how-to-run" title="Permalink to this headline"></a></h2>
+<p>This is backend point to insert new order. This can be done by clicking on new position button from the funds tab in the Banor system.</p>
+</section>
+<section id="the-process">
+<h2>The Process<a class="headerlink" href="#the-process" title="Permalink to this headline"></a></h2>
+<p>The steps for inserting orders are:</p>
+<ol class="arabic simple">
+<li><p>Click on Funds tab from banor system.</p></li>
+<li><p>Select (click on) the fund for which you want to place order.</p></li>
+<li><p>Click on new position button. New position pop-up get open.</p></li>
+<li><p>Select type (Buy/shell)</p></li>
+<li><p>Select security type.</p></li>
+<li><p>User should provide Ticker,Weight Target,Selection Broker,Quantity, Multiplier,limit, urgency and expiry.</p></li>
+<li><p>click on send button.</p></li>
+</ol>
+</section>
+<section id="module-funds">
+<span id="technical-documentation"></span><h2>Technical Documentation<a class="headerlink" href="#module-funds" title="Permalink to this headline"></a></h2>
+<p>Main script to call fund L/S type
+&#64;author: Shraddha Joshi</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Broker_Selection">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Broker_Selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FundCode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">InstrType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SecurityType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BrokerID_fromPortfolio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BrokerCode_fromPortfolio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BrokerSuggestedByUser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FX</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Bol_BNP</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Bol_BDL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Broker_Selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Broker_Selection" title="Permalink to this definition"></a></dt>
+<dd><p>This function is used to select broker. Based on BrokerID_fromPortfolio and BrokerCode_fromPortfolio</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FundCode</strong> – FundCode</p></li>
+<li><p><strong>InstrType</strong> – InstrumentType_1stCol</p></li>
+<li><p><strong>SecurityType</strong> – ProductType_2ndCol</p></li>
+<li><p><strong>Ticker</strong> – TickerISIN</p></li>
+<li><p><strong>BrokerID_fromPortfolio</strong> – </p></li>
+<li><p><strong>BrokerCode_fromPortfolio</strong> – </p></li>
+<li><p><strong>BrokerSuggestedByUser</strong> – IDcontactSuggestedBroker</p></li>
+<li><p><strong>FX</strong> – Boolean field False</p></li>
+<li><p><strong>Bol_BNP</strong> – Boolean field False</p></li>
+<li><p><strong>Bol_BDL</strong> – Boolean field False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>out_BrokerShortCode, out_BrokerID, out_BrokerName, out_C4F_BrokerName, out_JP_MorganAccount, BrokerType_A_B,            NeedComment, BrokerSelReason, ExecutorFactor_Cost, ExposureTradeID, out_UBS_Account, out_LeiReportingCode,            out_BrokerCodeLevEuro, out_masterAgreement, out_masterAgreementVersionDate</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Calculations">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Calculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">WeightTarget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WeightActual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundCurrency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">StockCurrency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ShowQuantityBox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PreciseQuantityIndicated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Bbg_Px_Last</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ProductType_2ndCol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NAV_or_PCvalue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QuantityToAvoidShortSelling</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbgCountryISO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MEA_Multiplier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BrokeriD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Exchange</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbgFutContSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbgOptContSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ExposureCalculationMethod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UnderlyingPrice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Calculations" title="Permalink to this definition"></a></dt>
+<dd><p>This function used to perform calculations based on WeightTarget,WeightActual and Quantity etc.</p>
+<p>How the value get calculated.</p>
+<ol class="arabic simple">
+<li><p>CounterValueLocalCurrency = PreciseQuantityIndicated * Bbg_Px_Last / 100 </p></li>
+<li><p>Quantity = CounterValueLocalCurrency / (UnderlyingPrice / 100 * bbgFutContSize)</p></li>
+<li><p>CounterValueLocalCurrency = Hex_To_Decimal(CounterValueLocalCurrency)</p></li>
+<li><p>BrokerCommisionsBPS = CounterValueLocalCurrency * (BrokerBps / 10000)</p></li>
+<li><p>BrokerCommisionsCENT = QuantityRounded * Decimal(BrokerCentPerShare / 100)</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>WeightTarget</strong> – WeightTarget</p></li>
+<li><p><strong>WeightActual</strong> – WeightActual</p></li>
+<li><p><strong>FundCurrency</strong> – FundCurrency</p></li>
+<li><p><strong>StockCurrency</strong> – bbgCrncy</p></li>
+<li><p><strong>ShowQuantityBox</strong> – ShowQuantityBox</p></li>
+<li><p><strong>PreciseQuantityIndicated</strong> – TradeQuantityPreciseIndicated</p></li>
+<li><p><strong>Bbg_Px_Last</strong> – bbg_Px_Last</p></li>
+<li><p><strong>ProductType_2ndCol</strong> – ProductType_2ndCol</p></li>
+<li><p><strong>NAV_or_PCvalue</strong> – NAV</p></li>
+<li><p><strong>QuantityToAvoidShortSelling</strong> – QuantityToAvoidShortSelling</p></li>
+<li><p><strong>bbgCountryISO</strong> – bbg_Country_Iso</p></li>
+<li><p><strong>MEA_Multiplier</strong> – Multiplier</p></li>
+<li><p><strong>BrokeriD</strong> – BrokerID</p></li>
+<li><p><strong>Exchange</strong> – bbg_Exchange</p></li>
+<li><p><strong>bbgFutContSize</strong> – bbg_FutContSize</p></li>
+<li><p><strong>bbgOptContSize</strong> – bbg_OptContSize</p></li>
+<li><p><strong>ExposureCalculationMethod</strong> – ExposureCalculationMethod</p></li>
+<li><p><strong>UnderlyingPrice</strong> – bbg_UnderlyingPrice</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CounterValueFundCurrency, CounterValueLocalCurrency, Quantity, QuantityRounded,            BrokerCommisionsBPS, BrokerBps, BrokerCentPerShare, BrokerCommisionsCENT, PotentialError, FX</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.CodesGeneration_Arbor">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">CodesGeneration_Arbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Col_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#CodesGeneration_Arbor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.CodesGeneration_Arbor" title="Permalink to this definition"></a></dt>
+<dd><p>This function return ArborProductType</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Col_1</strong> – Col_1</p></li>
+<li><p><strong>Col_2</strong> – Col_2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ArborProductType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.CodesGeneration_Casa_4_Funds">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">CodesGeneration_Casa_4_Funds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Col_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#CodesGeneration_Casa_4_Funds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.CodesGeneration_Casa_4_Funds" title="Permalink to this definition"></a></dt>
+<dd><p>This function returns Casa4FundsCode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Col_1</strong> – Col_1</p></li>
+<li><p><strong>Col_2</strong> – Col_2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Casa4FundsCode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Col_1_and_2_Using_Ticker_2">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Col_1_and_2_Using_Ticker_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_1_Ready</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Col_1_and_2_Using_Ticker_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Col_1_and_2_Using_Ticker_2" title="Permalink to this definition"></a></dt>
+<dd><p>This function assign col_1 and col_2 in case that they are in the portfolios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ticker</strong> – Ticker</p></li>
+<li><p><strong>Col_1_Ready</strong> – InstrumentType_1stCol</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>col_2, col_1</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Col_1_and_2_Using_Weight_3">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Col_1_and_2_Using_Weight_3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CashORswap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">StockName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BbgSecurityTyp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Col_1_and_2_Using_Weight_3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Col_1_and_2_Using_Weight_3" title="Permalink to this definition"></a></dt>
+<dd><p>This function assign col_1 and col_2 in case that they are in the portfolios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ticker</strong> – TickerISIN</p></li>
+<li><p><strong>Weight</strong> – WeightTarget</p></li>
+<li><p><strong>CashORswap</strong> – gcashORswap</p></li>
+<li><p><strong>StockName</strong> – sStockName</p></li>
+<li><p><strong>BbgSecurityTyp</strong> – bbg_Security_Typ</p></li>
+<li><p><strong>FundName</strong> – fund</p></li>
+</ul>
+</dd>
+</dl>
+<p>:return:col_1, col_2</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Create_2ColumnActionReusable">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Create_2ColumnActionReusable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SkeepDB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbgSecurityType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TransactionType_1stCol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Create_2ColumnActionReusable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Create_2ColumnActionReusable" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ticker</strong> – TickerSINI</p></li>
+<li><p><strong>Name</strong> – Name</p></li>
+<li><p><strong>SkeepDB</strong> – </p></li>
+<li><p><strong>bbgSecurityType</strong> – </p></li>
+<li><p><strong>TransactionType_1stCol</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Currency, DB_LastPrice, SecurityType_2stCol, idISIN, id_bb_Ultimate_Parent_Co, DatePrice, Country, Sector,            Coupon, Maturity, AccruedInterests, Yeld, NameOut</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Fund_Send">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Fund_Send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sStockName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TickerISIN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MultiplierQuantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lastPrice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TradeQuantityPreciseIndicated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fund_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cashOrSwap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">securityType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_Target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instructions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settleDate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suggestedBroker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">urgency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userComment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fund</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundNumber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundCurrency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ShowQuantityBox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Fund_Send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Fund_Send" title="Permalink to this definition"></a></dt>
+<dd><p>This Process get called after api get triggered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sStockName</strong> – stock name ( This is the stock name)</p></li>
+<li><p><strong>TickerISIN</strong> – TickerISIN (This is the ticker input para from form)</p></li>
+<li><p><strong>MultiplierQuantity</strong> – multiplier (This will define no. stocks want to purchase)</p></li>
+<li><p><strong>lastPrice</strong> – last price (Privious closing price)</p></li>
+<li><p><strong>TradeQuantityPreciseIndicated</strong> – quantity (Qauntity take from user)</p></li>
+<li><p><strong>fund_id</strong> – fund id initially must be None</p></li>
+<li><p><strong>side</strong> – BUY Or SELL</p></li>
+<li><p><strong>userId</strong> – user id (user who gonna purchase stock)</p></li>
+<li><p><strong>cashOrSwap</strong> – cash Or Swap (The transaction type for a new position will be CASH for long and SWAP for short.)</p></li>
+<li><p><strong>securityType</strong> – securityType</p></li>
+<li><p><strong>weight_Target</strong> – weight_Target (Max target price)</p></li>
+<li><p><strong>instructions</strong> – instructions (User given instructions)</p></li>
+<li><p><strong>settleDate</strong> – settleDate</p></li>
+<li><p><strong>suggestedBroker</strong> – suggestedBroker (Consultancy broker)</p></li>
+<li><p><strong>limit</strong> – limit (set limit for stop loss)</p></li>
+<li><p><strong>userName</strong> – userName</p></li>
+<li><p><strong>urgency</strong> – urgency Normal,High, Urgent</p></li>
+<li><p><strong>expiry</strong> – expiry</p></li>
+<li><p><strong>userComment</strong> – user comment</p></li>
+<li><p><strong>fund</strong> – Fund Name</p></li>
+<li><p><strong>FundNumber</strong> – Fund Number</p></li>
+<li><p><strong>FundCurrency</strong> – Currency</p></li>
+<li><p><strong>ShowQuantityBox</strong> – ShowQuantityBox Boolean type</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return id once the order get inserted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Hex_To_Decimal">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Hex_To_Decimal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Hex_To_Decimal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Hex_To_Decimal" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> – input para.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>convert Hex to decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Http_Server_wst01">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Http_Server_wst01</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TickerISIN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fund</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Http_Server_wst01"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Http_Server_wst01" title="Permalink to this definition"></a></dt>
+<dd><p>Fetch data from bbg workstation. If workstation down fetching records from database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TickerISIN</strong> – TickerISIN (User input Ticker)</p></li>
+<li><p><strong>fund</strong> – fund No (Fund Number to get fund)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return records into dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Order_Changes">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Order_Changes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">OrderID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UserID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TimeCreation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TickerISIN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">LimitPriceChanges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ExecutedQuantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ChangeBroker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NewBrokerShortCode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Order_Changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Order_Changes" title="Permalink to this definition"></a></dt>
+<dd><p>In this function data inserting into OSUSR_SKP_ORDERCHANGES table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>OrderID</strong> – order id</p></li>
+<li><p><strong>UserID</strong> – GetUserId</p></li>
+<li><p><strong>TimeCreation</strong> – CurrTime()</p></li>
+<li><p><strong>TickerISIN</strong> – TickerISIN</p></li>
+<li><p><strong>LimitPriceChanges</strong> – Limit</p></li>
+<li><p><strong>ExecutedQuantity</strong> – 0</p></li>
+<li><p><strong>ChangeBroker</strong> – False (Boolean type)</p></li>
+<li><p><strong>NewBrokerShortCode</strong> – BrokerShortCode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return last object id as process id.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Order_Type_A_B">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Order_Type_A_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IDcontactSuggestedBroker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Order_Type_A_B"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Order_Type_A_B" title="Permalink to this definition"></a></dt>
+<dd><p>This function check for BrokerType_A_B</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>IDcontactSuggestedBroker</strong> – IDcontactSuggestedBroker</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Owl_Api">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Owl_Api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">BBG_BrokerCode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Owl_Api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Owl_Api" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>BBG_BrokerCode</strong> – BBG_BrokerCode</p></li>
+<li><p><strong>Col_1</strong> – Col_1</p></li>
+<li><p><strong>Col_2</strong> – Col_2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>API_Command</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Swap_Exposure">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Swap_Exposure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FundCode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Swap_Exposure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Swap_Exposure" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>FundCode</strong> – FundCode</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ExposureTradeID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.TraderNotes">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">TraderNotes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ticker_ISIN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#TraderNotes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.TraderNotes" title="Permalink to this definition"></a></dt>
+<dd><p>This function used to get trader notes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ticker_ISIN</strong> – TickerISIN</p></li>
+<li><p><strong>FundID</strong> – FundsID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>TraderNote</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Trading_Bond_Cash">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Trading_Bond_Cash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FundNumber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IDcontactSuggestedBroker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PortfolioBrokerCode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Trading_Bond_Cash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Trading_Bond_Cash" title="Permalink to this definition"></a></dt>
+<dd><p>This fuction get called when InstrumentType_1stCol is C and  ProductType_2ndCol is Bond.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FundNumber</strong> – FundNumber</p></li>
+<li><p><strong>Ticker</strong> – Ticker</p></li>
+<li><p><strong>IDcontactSuggestedBroker</strong> – IDcontactSuggestedBroker</p></li>
+<li><p><strong>PortfolioBrokerCode</strong> – PortfolioBrokerCode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Trading_Bond_Cash</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Trading_Derivative_Cash">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Trading_Derivative_Cash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FundNumber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PortfolioBrokerCode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Trading_Derivative_Cash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Trading_Derivative_Cash" title="Permalink to this definition"></a></dt>
+<dd><p>This function calculating values of IDcontactForBroker,Custodian,Account based on fundNumber</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FundNumber</strong> – FundNumber</p></li>
+<li><p><strong>PortfolioBrokerCode</strong> – PortfolioBrokerCode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IDcontactForBroker,Custodian,Account based on fundNumber</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Trading_Equity_Fund_ETF_Cash">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Trading_Equity_Fund_ETF_Cash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FundNumber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IDcontactSuggestedBroker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PortfolioBrokerCode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Trading_Equity_Fund_ETF_Cash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Trading_Equity_Fund_ETF_Cash" title="Permalink to this definition"></a></dt>
+<dd><p>This function is used for Trading_Equity_Fund_ETF_Cash process</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FundNumber</strong> – FundNumber</p></li>
+<li><p><strong>Ticker</strong> – TickerISIN</p></li>
+<li><p><strong>IDcontactSuggestedBroker</strong> – IDcontactSuggestedBroker</p></li>
+<li><p><strong>Col_2</strong> – ProductType_2ndCol</p></li>
+<li><p><strong>PortfolioBrokerCode</strong> – PortfolioBrokerCode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Trading_Equity_Fund_ETF_Cash</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Trading_Swap">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Trading_Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FundNumber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IDcontactSuggestedBroker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PortfolioBrokerCode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Trading_Swap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Trading_Swap" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FundNumber</strong> – FundNumber</p></li>
+<li><p><strong>IDcontactSuggestedBroker</strong> – IDcontactSuggestedBroker</p></li>
+<li><p><strong>PortfolioBrokerCode</strong> – PortfolioBrokerCode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BrokerName, BrokerShortCode, Custodian, Account, C4FBroker, BrokerID, BrokerType_A_B,                    NeedComment, BrokerSelReason, ExecutorFactor_Cost, JP_MorganAccount</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.Value_Date_Generator">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">Value_Date_Generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Col_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#Value_Date_Generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.Value_Date_Generator" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Col_1</strong> – Col_1</p></li>
+<li><p><strong>Col_2</strong> – Col_2</p></li>
+<li><p><strong>Ticker</strong> – TickerSINI</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>t_plus</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.col1_col2_with_auto_correction">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">col1_col2_with_auto_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ticker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundNumber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Col_1_Ready</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CurrencyIN</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ForcingInstrumentTypecol1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FundName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#col1_col2_with_auto_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.col1_col2_with_auto_correction" title="Permalink to this definition"></a></dt>
+<dd><p>This function assign col_1 and col_2 in case that they are in the portfolios.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ticker</strong> – TickerISIN</p></li>
+<li><p><strong>FundNumber</strong> – FundNumber</p></li>
+<li><p><strong>Col_1_Ready</strong> – InstrumentType_1stCol</p></li>
+<li><p><strong>CurrencyIN</strong> – bbgCrncy</p></li>
+<li><p><strong>ForcingInstrumentTypecol1</strong> – ForcingTtype</p></li>
+<li><p><strong>FundName</strong> – fund</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>col_1, col_2, CurrencyOUT</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funds.logg_Handler">
+<span class="sig-prename descclassname"><span class="pre">funds.</span></span><span class="sig-name descname"><span class="pre">logg_Handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fund</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/funds.html#logg_Handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#funds.logg_Handler" title="Permalink to this definition"></a></dt>
+<dd><p>This is log handler function used to create logger object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fund</strong> – Fund No</p></li>
+<li><p><strong>logger_name</strong> – logger name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>logger_sqlalchemy object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="fundapi.html" class="btn btn-neutral float-left" title="fund api module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, shraddha joshi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fund api module &mdash; Banor Documents 1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="funds module" href="funds.html" />
+    <link rel="prev" title="email_send_service module" href="email_send_service.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Banor Documents
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Funds</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="DatafromBBG.html">DatafromBBG module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbgdatafromdb.html">bbgdatafromdb module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email_send_service.html">email_send_service module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">fund api module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run">How to run</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="funds.html">funds module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Banor Documents</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">Funds</a> &raquo;</li>
+      <li>fund api module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python_script_rst/fundapi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fund-api-module">
+<h1>fund api module<a class="headerlink" href="#fund-api-module" title="Permalink to this headline"></a></h1>
+<p>In this script contain all the api to run the python script.</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>This script having various flask api with same end point to connect various environment.</p></li>
+<li><p>To connect development environment server details are host=”172.16.5.21”, port=5022</p></li>
+<li><p>Here is the developer document to get access api’s by postman.</p></li>
+<li><p>Document contains input and output parameters for all api’s.</p></li>
+</ul>
+<p>(<a class="reference external" href="https://docs.google.com/spreadsheets/u/1/d/1X7oG2pwr0TSMkKXekhvT1vfjynakxgSjrjhyO0-I3-Q/edit#gid=0">https://docs.google.com/spreadsheets/u/1/d/1X7oG2pwr0TSMkKXekhvT1vfjynakxgSjrjhyO0-I3-Q/edit#gid=0</a>)</p>
+</section>
+<section id="how-to-run">
+<h2>How to run<a class="headerlink" href="#how-to-run" title="Permalink to this headline"></a></h2>
+<p>From postman user can access individual api.</p>
+<ul class="simple">
+<li><p>open postman</p></li>
+<li><p>Put Url into request url tab</p></li>
+<li><p>select specified method from developer document</p></li>
+<li><p>provide input Json body and hit the url by click on send and see response below into response tab.</p></li>
+</ul>
+<span class="target" id="module-fundapi"></span><dl class="py function">
+<dt class="sig sig-object py" id="fundapi.Approving_order">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">Approving_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#Approving_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.Approving_order" title="Permalink to this definition"></a></dt>
+<dd><p>Approving order stage api.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.Cancel_order">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">Cancel_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#Cancel_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.Cancel_order" title="Permalink to this definition"></a></dt>
+<dd><p>Cancel order stage api.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fundapi.DatabaseHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">DatabaseHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fund</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_sqlalchemy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#DatabaseHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.DatabaseHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">logging.Handler</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fundapi.DatabaseHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#DatabaseHandler.emit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.DatabaseHandler.emit" title="Permalink to this definition"></a></dt>
+<dd><p>Do whatever it takes to actually log the specified logging record.</p>
+<p>This version is intended to be implemented by subclasses and so
+raises a NotImplementedError.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.OrderReceivedOnTradingDeskApi">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">OrderReceivedOnTradingDeskApi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#OrderReceivedOnTradingDeskApi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.OrderReceivedOnTradingDeskApi" title="Permalink to this definition"></a></dt>
+<dd><p>OrderReceivedOnTradingDeskApi process api which set order status Working suggestion.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.Reject_order">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">Reject_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#Reject_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.Reject_order" title="Permalink to this definition"></a></dt>
+<dd><p>Rejecting order stage api.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.fx_hedging_api">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">fx_hedging_api</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#fx_hedging_api"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.fx_hedging_api" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.get_bbg_records">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">get_bbg_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#get_bbg_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.get_bbg_records" title="Permalink to this definition"></a></dt>
+<dd><p>This is an api for fetch name,currency and  last price from bbg.
+:return: name,currency and  last price.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.get_bbg_records_from_db">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">get_bbg_records_from_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TickerISIN</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#get_bbg_records_from_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.get_bbg_records_from_db" title="Permalink to this definition"></a></dt>
+<dd><p>This is an api for fetch name,currency and  last price from db.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>TickerISIN</strong> – TickerISIN</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>name,currency and  last price</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.get_currency_record">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">get_currency_record</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#get_currency_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.get_currency_record" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.get_documents">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">get_documents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#get_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.get_documents" title="Permalink to this definition"></a></dt>
+<dd><p>display developer doc api.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.query_records">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">query_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#query_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.query_records" title="Permalink to this definition"></a></dt>
+<dd><p>This is an api to called funds script.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="fundapi.treader_edit_pop">
+<span class="sig-prename descclassname"><span class="pre">fundapi.</span></span><span class="sig-name descname"><span class="pre">treader_edit_pop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fundapi.html#treader_edit_pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fundapi.treader_edit_pop" title="Permalink to this definition"></a></dt>
+<dd><p>Edit popup api</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="email_send_service.html" class="btn btn-neutral float-left" title="email_send_service module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="funds.html" class="btn btn-neutral float-right" title="funds module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, shraddha joshi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

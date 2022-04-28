@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DatafromBBG &mdash; Banor Documents 1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Banor Documents
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python_script_rst/modules.html">Funds</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Banor Documents</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>DatafromBBG</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for DatafromBBG</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+
+
+<div class="viewcode-block" id="findbyBBGws01"><a class="viewcode-back" href="../python_script_rst/DatafromBBG.html#DatafromBBG.findbyBBGws01">[docs]</a><span class="k">def</span> <span class="nf">findbyBBGws01</span><span class="p">(</span><span class="n">Ticker</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    In this function, BBG workstation api get triggered to collect the data.</span>
+
+<span class="sd">    :param Ticker: TickerISIN</span>
+<span class="sd">    :return:  values list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ticker = &#39;AAPL US Equity&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;findbyBBGws01&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ticker: &#39;</span><span class="p">,</span> <span class="n">Ticker</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://172.16.20.10:8080/InstrumentInfo&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Code&quot;</span><span class="p">:</span> <span class="n">Ticker</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;BGG is down!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;BGG is down&quot;</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">mytree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">mytree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;BGG is down&quot;</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Getting BBG data...........&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">TICKER</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;TICKER&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">###ticker    0</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TICKER: &#39;</span><span class="p">,</span> <span class="n">TICKER</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TICKER</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">TICKER</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TICKER</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">PX_LAST</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;PX_LAST&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">###price      1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PX_LAST: &#39;</span><span class="p">,</span> <span class="n">PX_LAST</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PX_LAST</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">PX_LAST</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PX_LAST</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">SECURITY_NAME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;SECURITY_NAME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">###SECURITY_NAME 2</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SECURITY_NAME: &#39;</span><span class="p">,</span> <span class="n">SECURITY_NAME</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SECURITY_NAME</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">SECURITY_NAME</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SECURITY_NAME</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">SECURITY_TYP</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;SECURITY_TYP&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##SECURITY_TYP   3</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SECURITY_TYP: &#39;</span><span class="p">,</span> <span class="n">SECURITY_TYP</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SECURITY_TYP</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">SECURITY_TYP</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SECURITY_TYP</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CRNCY</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CRNCY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##CRNCY          4</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CRNCY: &#39;</span><span class="p">,</span> <span class="n">CRNCY</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CRNCY</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">CRNCY</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CRNCY</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ID_ISIN</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ID_ISIN&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">## isin           5</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ID_ISIN: &#39;</span><span class="p">,</span> <span class="n">ID_ISIN</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ID_ISIN</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ID_ISIN</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ID_ISIN</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">COUNTRY_FULL_NAME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;COUNTRY_FULL_NAME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##COUNTRY_FULL_NAME  6</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COUNTRY_FULL_NAME: &#39;</span><span class="p">,</span> <span class="n">COUNTRY_FULL_NAME</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY_FULL_NAME</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">COUNTRY_FULL_NAME</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY_FULL_NAME</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">SETTLE_DT</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;SETTLE_DT&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##SETTLE_DT          7</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SETTLE_Date: &#39;</span><span class="p">,</span> <span class="n">SETTLE_DT</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SETTLE_DT</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">SETTLE_DT</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SETTLE_DT</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CNTRY_OF_RISK</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CNTRY_OF_RISK&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##CNTRY_OF_RISK   8</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CNTRY_OF_RISK: &#39;</span><span class="p">,</span> <span class="n">CNTRY_OF_RISK</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CNTRY_OF_RISK</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">CNTRY_OF_RISK</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CNTRY_OF_RISK</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">DELTA</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;DELTA&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##DELTA  9</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DELTA: &#39;</span><span class="p">,</span> <span class="n">DELTA</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DELTA</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">DELTA</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DELTA</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">FUT_CONT_SIZE</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;FUT_CONT_SIZE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># FUT_CONT_SIZE    10</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;FUT_CONT_SIZE: &#39;</span><span class="p">,</span> <span class="n">FUT_CONT_SIZE</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FUT_CONT_SIZE</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">FUT_CONT_SIZE</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FUT_CONT_SIZE</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">INDUSTRY_SECTOR</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;INDUSTRY_SECTOR&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># INDUSTRY_SECTOR  12</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;INDUSTRY_SECTOR: &#39;</span><span class="p">,</span> <span class="n">INDUSTRY_SECTOR</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">INDUSTRY_SECTOR</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">INDUSTRY_SECTOR</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">INDUSTRY_SECTOR</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ID_BB_ULTIMATE_PARENT_CO</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ID_BB_ULTIMATE_PARENT_CO&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># parentcompany id  13</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ID_BB_ULTIMATE_PARENT_CO: &#39;</span><span class="p">,</span> <span class="n">ID_BB_ULTIMATE_PARENT_CO</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ID_BB_ULTIMATE_PARENT_CO</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ID_BB_ULTIMATE_PARENT_CO</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ID_BB_ULTIMATE_PARENT_CO</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">REGISTERED_COUNTRY_LOCATION</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;REGISTERED_COUNTRY_LOCATION&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##reg_cntry_loc 14</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;REGISTERED_COUNTRY_LOCATION: &#39;</span><span class="p">,</span> <span class="n">REGISTERED_COUNTRY_LOCATION</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">REGISTERED_COUNTRY_LOCATION</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">REGISTERED_COUNTRY_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">REGISTERED_COUNTRY_LOCATION</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">EQY_SH_OUT</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;EQY_SH_OUT&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># issue oustanding value 15</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EQY_SH_OUT: &#39;</span><span class="p">,</span> <span class="n">EQY_SH_OUT</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_SH_OUT</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">EQY_SH_OUT</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_SH_OUT</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">COUNTRY_OF_LARGEST_REVENUE</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;COUNTRY_OF_LARGEST_REVENUE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">##cntry_largeset_rev  16</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COUNTRY_OF_LARGEST_REVENUE: &#39;</span><span class="p">,</span> <span class="n">COUNTRY_OF_LARGEST_REVENUE</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY_OF_LARGEST_REVENUE</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">COUNTRY_OF_LARGEST_REVENUE</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY_OF_LARGEST_REVENUE</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">UNDERLYING_ISIN</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;UNDERLYING_ISIN&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># underlying isin  18</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;UNDERLYING_ISIN: &#39;</span><span class="p">,</span> <span class="n">UNDERLYING_ISIN</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UNDERLYING_ISIN</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">UNDERLYING_ISIN</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UNDERLYING_ISIN</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">AMT_OUTSTANDING</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;AMT_OUTSTANDING&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># AMT_OUTSTANDING value 19</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AMT_OUTSTANDING: &#39;</span><span class="p">,</span> <span class="n">AMT_OUTSTANDING</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AMT_OUTSTANDING</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">AMT_OUTSTANDING</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AMT_OUTSTANDING</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">VOLUME_AVG_20D</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;VOLUME_AVG_20D&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># VOLUME_AVG_20D value  20</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;VOLUME_AVG_20D: &#39;</span><span class="p">,</span> <span class="n">VOLUME_AVG_20D</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VOLUME_AVG_20D</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">VOLUME_AVG_20D</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VOLUME_AVG_20D</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">OPT_CONT_SIZE</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;OPT_CONT_SIZE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># OPT_CONT_SIZE value  21</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OPT_CONT_SIZE: &#39;</span><span class="p">,</span> <span class="n">OPT_CONT_SIZE</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OPT_CONT_SIZE</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">OPT_CONT_SIZE</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OPT_CONT_SIZE</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ISSUER_INDUSTRY</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ISSUER_INDUSTRY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># ISSUER_INDUSTRY value  22</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ISSUER_INDUSTRY: &#39;</span><span class="p">,</span> <span class="n">ISSUER_INDUSTRY</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ISSUER_INDUSTRY</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ISSUER_INDUSTRY</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ISSUER_INDUSTRY</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CAPITAL_CONTINGENT_SECURITY</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+                <span class="s1">&#39;CAPITAL_CONTINGENT_SECURITY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># CAPITAL_CONTINGENT_SECURITY value 23</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CAPITAL_CONTINGENT_SECURITY: &#39;</span><span class="p">,</span> <span class="n">CAPITAL_CONTINGENT_SECURITY</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CAPITAL_CONTINGENT_SECURITY</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">CAPITAL_CONTINGENT_SECURITY</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CAPITAL_CONTINGENT_SECURITY</span><span class="p">)</span>
+        <span class="c1">#########################################################################</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">COUNTRY</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;COUNTRY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># COUNTRY value 24</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COUNTRY: &#39;</span><span class="p">,</span> <span class="n">COUNTRY</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">COUNTRY</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">COUNTRY_ISO</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;COUNTRY_ISO&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># COUNTRY_ISO value 25</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;COUNTRY_ISO: &#39;</span><span class="p">,</span> <span class="n">COUNTRY_ISO</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY_ISO</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">COUNTRY_ISO</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">COUNTRY_ISO</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CUR_MKT_CAP</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CUR_MKT_CAP&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># CUR_MKT_CAP value 26</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CUR_MKT_CAP: &#39;</span><span class="p">,</span> <span class="n">CUR_MKT_CAP</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CUR_MKT_CAP</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">CUR_MKT_CAP</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CUR_MKT_CAP</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">PARENT_TICKER_EXCHANGE</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;PARENT_TICKER_EXCHANGE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># PARENT_TICKER_EXCHANGE value 27</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PARENT_TICKER_EXCHANGE: &#39;</span><span class="p">,</span> <span class="n">PARENT_TICKER_EXCHANGE</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PARENT_TICKER_EXCHANGE</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">PARENT_TICKER_EXCHANGE</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PARENT_TICKER_EXCHANGE</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CHG_PCT_YTD</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CHG_PCT_YTD&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># CHG_PCT_YTD value 28</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CHG_PCT_YTD: &#39;</span><span class="p">,</span> <span class="n">CHG_PCT_YTD</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CHG_PCT_YTD</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">CHG_PCT_YTD</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CHG_PCT_YTD</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">CPN</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CPN&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># CPN value 29  coupon</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CPN: &#39;</span><span class="p">,</span> <span class="n">CPN</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CPN</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">CPN</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CPN</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">INT_ACC</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;INT_ACC&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># INT_ACC value 30  accruedinterest</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;INT_ACC: &#39;</span><span class="p">,</span> <span class="n">INT_ACC</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">INT_ACC</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">INT_ACC</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">INT_ACC</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">EQY_ALPHA</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;EQY_ALPHA&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># EQY_ALPHA value 31</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EQY_ALPHA: &#39;</span><span class="p">,</span> <span class="n">EQY_ALPHA</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_ALPHA</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">EQY_ALPHA</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_ALPHA</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">EQY_BETA</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;EQY_BETA&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># EQY_BETA value 32</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EQY_BETA: &#39;</span><span class="p">,</span> <span class="n">EQY_BETA</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_BETA</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">EQY_BETA</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_BETA</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">EQY_PRIM_EXCH_SHRT</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;EQY_PRIM_EXCH_SHRT&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># EQY_PRIM_EXCH_SHRT value 33</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EQY_PRIM_EXCH_SHRT: &#39;</span><span class="p">,</span> <span class="n">EQY_PRIM_EXCH_SHRT</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_PRIM_EXCH_SHRT</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">EQY_PRIM_EXCH_SHRT</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EQY_PRIM_EXCH_SHRT</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ID_BB_ULTIMATE_PARENT_CO_NAME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+                <span class="s1">&#39;ID_BB_ULTIMATE_PARENT_CO_NAME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># ID_BB_ULTIMATE_PARENT_CO_NAME value 34</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ID_BB_ULTIMATE_PARENT_CO_NAME: &#39;</span><span class="p">,</span> <span class="n">ID_BB_ULTIMATE_PARENT_CO_NAME</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ID_BB_ULTIMATE_PARENT_CO_NAME</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ID_BB_ULTIMATE_PARENT_CO_NAME</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ID_BB_ULTIMATE_PARENT_CO_NAME</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">INDUSTRY_GROUP</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;INDUSTRY_GROUP&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># INDUSTRY_GROUP value 35</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;INDUSTRY_GROUP: &#39;</span><span class="p">,</span> <span class="n">INDUSTRY_GROUP</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">INDUSTRY_GROUP</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">INDUSTRY_GROUP</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">INDUSTRY_GROUP</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">SHORT_NAME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;SHORT_NAME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># SHORT_NAME value 36</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SHORT_NAME: &#39;</span><span class="p">,</span> <span class="n">SHORT_NAME</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SHORT_NAME</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">SHORT_NAME</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SHORT_NAME</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">MARKET_SECTOR_DES</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MARKET_SECTOR_DES&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># MARKET_SECTOR_DES value 37</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MARKET_SECTOR_DES: &#39;</span><span class="p">,</span> <span class="n">MARKET_SECTOR_DES</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MARKET_SECTOR_DES</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">MARKET_SECTOR_DES</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MARKET_SECTOR_DES</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">MATURITY</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MATURITY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># MATURITY date value 38</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MATURITY: &#39;</span><span class="p">,</span> <span class="n">MATURITY</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MATURITY</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">MATURITY</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MATURITY</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">NAME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;NAME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># NAME value 39</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NAME: &#39;</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NAME</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">OPT_PUT_CALL</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;OPT_PUT_CALL&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># OPT_PUT_CALL value 40</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OPT_PUT_CALL: &#39;</span><span class="p">,</span> <span class="n">OPT_PUT_CALL</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OPT_PUT_CALL</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">OPT_PUT_CALL</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OPT_PUT_CALL</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">OPT_STRIKE_PX</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;OPT_STRIKE_PX&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># OPT_STRIKE_PX value 41</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OPT_STRIKE_PX: &#39;</span><span class="p">,</span> <span class="n">OPT_STRIKE_PX</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OPT_STRIKE_PX</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">OPT_STRIKE_PX</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OPT_STRIKE_PX</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">PAYMENT_RANK</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;PAYMENT_RANK&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># PAYMENT_RANK value 42</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PAYMENT_RANK: &#39;</span><span class="p">,</span> <span class="n">PAYMENT_RANK</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PAYMENT_RANK</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">PAYMENT_RANK</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PAYMENT_RANK</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">VOLATILITY_30D</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;VOLATILITY_30D&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># VOLATILITY_30D value 43</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;VOLATILITY_30D: &#39;</span><span class="p">,</span> <span class="n">VOLATILITY_30D</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VOLATILITY_30D</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">VOLATILITY_30D</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VOLATILITY_30D</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">VOLUME_AVG_30D</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;VOLUME_AVG_30D&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1"># VOLUME_AVG_30D value  44</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;VOLUME_AVG_30D: &#39;</span><span class="p">,</span> <span class="n">VOLUME_AVG_30D</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VOLUME_AVG_30D</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">VOLUME_AVG_30D</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">VOLUME_AVG_30D</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ERROR</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>  <span class="c1">###ERROR      value  44</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: &#39;</span><span class="p">,</span> <span class="n">ERROR</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ERROR</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ERROR</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ERROR</span><span class="p">)</span>
+
+        <span class="c1">############################################## Extra added for api ######################</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">TICKER_AND_EXCH_CODE</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;TICKER_AND_EXCH_CODE&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TICKER_AND_EXCH_CODE: &#39;</span><span class="p">,</span> <span class="n">TICKER_AND_EXCH_CODE</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TICKER_AND_EXCH_CODE</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">TICKER_AND_EXCH_CODE</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TICKER_AND_EXCH_CODE</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">TickerIsinUpperCase</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;TickerIsinUpperCase&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TickerIsinUpperCase: &#39;</span><span class="p">,</span> <span class="n">TickerIsinUpperCase</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TickerIsinUpperCase</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">TickerIsinUpperCase</span> <span class="o">=</span> <span class="n">Ticker</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TickerIsinUpperCase</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">MaturityDate</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;MaturityDate&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MaturityDate: &#39;</span><span class="p">,</span> <span class="n">MaturityDate</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MaturityDate</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">MaturityDate</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MaturityDate</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">STARTTIME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;STARTTIME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;STARTTIME: &#39;</span><span class="p">,</span> <span class="n">STARTTIME</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">STARTTIME</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">STARTTIME</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">STARTTIME</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">EndTime</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;EndTime&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EndTime: &#39;</span><span class="p">,</span> <span class="n">EndTime</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EndTime</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">EndTime</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">EndTime</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">UnderlayPrcie</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;UnderlayPrcie&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;UnderlayPrcie: &#39;</span><span class="p">,</span> <span class="n">UnderlayPrcie</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UnderlayPrcie</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">UnderlayPrcie</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">UnderlayPrcie</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lot_size</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;lot_size&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;lot_size: &#39;</span><span class="p">,</span> <span class="n">lot_size</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lot_size</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">lot_size</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lot_size</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Maturity_Date_Estimated</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Maturity_Date_Estimated&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Maturity_Date_Estimated: &#39;</span><span class="p">,</span> <span class="n">Maturity_Date_Estimated</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Maturity_Date_Estimated</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">Maturity_Date_Estimated</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Maturity_Date_Estimated</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Next_Call_Dt</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Next_Call_Dt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Next_Call_Dt: &#39;</span><span class="p">,</span> <span class="n">Next_Call_Dt</span><span class="p">)</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Next_Call_Dt</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">Next_Call_Dt</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Next_Call_Dt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">values</span></div>
+
+
+<span class="c1"># findbyBBGws01(&#39;AAPL US Equity&#39;)</span>
+
+<span class="c1"># @app.route(&#39;/getbbgvalues&#39;, methods=[&#39;POST&#39;])</span>
+<span class="c1"># def bbgvalue():</span>
+<span class="c1">#     from getbbg import findbyBBG</span>
+<span class="c1">#     req_data = request.get_json()</span>
+<span class="c1">#     Ticker = req_data.get(&quot;tickerid&quot;)</span>
+<span class="c1">#     datavalues = findbyBBG(Ticker)</span>
+<span class="c1">#     datakeys = [&#39;PX_LAST&#39;,&#39;SECURITY_NAME&#39;,&#39;SECURITY_TYP&#39;,&#39;CRNCY&#39;,&#39;ID_ISIN&#39;,&#39;COUNTRY_FULL_NAME&#39;,&#39;SETTLE_Date&#39;]</span>
+<span class="c1">#     bbgdata= dict(zip(datakeys,datavalues))</span>
+<span class="c1">#     return bbgdata</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, shraddha joshi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

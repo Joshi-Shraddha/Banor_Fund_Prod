@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fundapi &mdash; Banor Documents 1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Banor Documents
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python_script_rst/modules.html">Funds</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Banor Documents</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>fundapi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for fundapi</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">from</span> <span class="nn">flask_cors</span> <span class="kn">import</span> <span class="n">CORS</span>
+<span class="kn">from</span> <span class="nn">funds</span> <span class="kn">import</span> <span class="n">Fund_Send</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">configuration</span> <span class="kn">import</span> <span class="n">database_dev</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">Trading.Trading_popups</span> <span class="kn">import</span> <span class="n">trading_popups</span>
+<span class="kn">from</span> <span class="nn">Trading.suggestionbox_icons</span> <span class="kn">import</span> <span class="n">OrderReceivedOnTradingDesk</span><span class="p">,</span> <span class="n">OrdersApproving</span><span class="p">,</span> <span class="n">OrdersRejecting</span><span class="p">,</span> <span class="n">OrdersCancel</span>
+<span class="kn">from</span> <span class="nn">Trading.Fx_hedging</span> <span class="kn">import</span> <span class="n">fx_hedging</span><span class="p">,</span> <span class="n">currency_calculation</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+<span class="n">CORS</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="n">template_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\Users\Aress\Projects\_build\html\index.html&quot;</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="n">template_dir</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DatabaseHandler"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.DatabaseHandler">[docs]</a><span class="k">class</span> <span class="nc">DatabaseHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fund</span><span class="p">,</span> <span class="n">logger_sqlalchemy</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fund</span> <span class="o">=</span> <span class="n">fund</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger_sqlalchemy</span>
+
+<div class="viewcode-block" id="DatabaseHandler.emit"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.DatabaseHandler.emit">[docs]</a>    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">database_dev</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">log_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;asctime&#39;</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S,</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;levelname&#39;</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span>
+        <span class="n">pathname</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;pathname&#39;</span><span class="p">],</span>
+        <span class="n">line_no</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;lineno&#39;</span><span class="p">]</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">line_no</span><span class="p">)</span>
+
+        <span class="n">fund_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fund</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="n">Message</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Message</span> <span class="o">=</span> <span class="s2">&quot;NULL&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">insert_query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sd">&#39;&#39;&#39;INSERT INTO [OUTSYS_DEVELOP].[Banor].[Fund_Log] (Logger, Level, Message, DateTime,FundName,Trace) VALUES (%s,%s,%s,%s,%s,%s)&#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">insert_query</span><span class="p">,</span> <span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">Message</span><span class="p">,</span> <span class="n">log_time</span><span class="p">,</span> <span class="n">fund_name</span><span class="p">,</span> <span class="n">trace</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s2">&quot;return Logging&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="query_records"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.query_records">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/query_records&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">query_records</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is an api to called funds script.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">req_data</span><span class="p">)</span>
+        <span class="n">side</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;side&quot;</span><span class="p">)</span>
+        <span class="n">cashOrSwap</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cashOrSwap&quot;</span><span class="p">)</span>
+        <span class="n">securityType</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;securityType&quot;</span><span class="p">)</span>
+        <span class="n">tickerIsin</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tickerIsin&quot;</span><span class="p">)</span>
+        <span class="n">sStockName</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stockName&quot;</span><span class="p">)</span>
+        <span class="n">lastPrice</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lastPrice&quot;</span><span class="p">)</span>
+        <span class="n">weight_Target</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight_Target&quot;</span><span class="p">)</span>
+        <span class="n">multiplier</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiplier&quot;</span><span class="p">)</span>
+        <span class="n">instructions</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;instructions&quot;</span><span class="p">)</span>
+        <span class="n">settleDate</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;settleDate&quot;</span><span class="p">)</span>
+        <span class="n">suggestedBroker</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suggestedBroker&quot;</span><span class="p">)</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)</span>
+        <span class="n">urgency</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;urgency&quot;</span><span class="p">)</span>
+        <span class="n">expiry</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;expiry&quot;</span><span class="p">)</span>
+        <span class="n">userComment</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;userComment&quot;</span><span class="p">)</span>
+        <span class="n">quantity</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;quantity&quot;</span><span class="p">)</span>
+        <span class="n">fund</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fund&quot;</span><span class="p">)</span>
+        <span class="n">fund_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+        <span class="n">userId</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;userId&quot;</span><span class="p">)</span>
+        <span class="n">userName</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;userName&quot;</span><span class="p">)</span>
+        <span class="n">fundNumber</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fundNumber&quot;</span><span class="p">)</span>
+        <span class="n">FundCurrency</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fundCurrency&quot;</span><span class="p">)</span>
+        <span class="n">ShowQuantityBox</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ShowQuantityBox&quot;</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Fund_Send</span><span class="p">(</span><span class="n">sStockName</span><span class="o">=</span><span class="n">sStockName</span><span class="p">,</span> <span class="n">TickerISIN</span><span class="o">=</span><span class="n">tickerIsin</span><span class="p">,</span> <span class="n">MultiplierQuantity</span><span class="o">=</span><span class="n">multiplier</span><span class="p">,</span>
+                             <span class="n">lastPrice</span><span class="o">=</span><span class="n">lastPrice</span><span class="p">,</span> <span class="n">TradeQuantityPreciseIndicated</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">fund_id</span><span class="o">=</span><span class="n">fund_id</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="p">,</span>
+                             <span class="n">cashOrSwap</span><span class="o">=</span><span class="n">cashOrSwap</span><span class="p">,</span> <span class="n">userName</span><span class="o">=</span><span class="n">userName</span><span class="p">,</span> <span class="n">securityType</span><span class="o">=</span><span class="n">securityType</span><span class="p">,</span>
+                             <span class="n">weight_Target</span><span class="o">=</span><span class="n">weight_Target</span><span class="p">,</span> <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">,</span>
+                             <span class="n">settleDate</span><span class="o">=</span><span class="n">settleDate</span><span class="p">,</span> <span class="n">suggestedBroker</span><span class="o">=</span><span class="n">suggestedBroker</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+                             <span class="n">userId</span><span class="o">=</span><span class="n">userId</span><span class="p">,</span> <span class="n">urgency</span><span class="o">=</span><span class="n">urgency</span><span class="p">,</span>
+                             <span class="n">expiry</span><span class="o">=</span><span class="n">expiry</span><span class="p">,</span> <span class="n">userComment</span><span class="o">=</span><span class="n">userComment</span><span class="p">,</span> <span class="n">fund</span><span class="o">=</span><span class="n">fund</span><span class="p">,</span> <span class="n">FundNumber</span><span class="o">=</span><span class="n">fundNumber</span><span class="p">,</span>
+                             <span class="n">FundCurrency</span><span class="o">=</span><span class="n">FundCurrency</span><span class="p">,</span>
+                             <span class="n">ShowQuantityBox</span><span class="o">=</span><span class="n">ShowQuantityBox</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">})</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">fund</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fund&quot;</span><span class="p">)</span>
+        <span class="n">logger_sqlalchemy</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">logger_sqlalchemy</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">logger_sqlalchemy</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">DatabaseHandler</span><span class="p">(</span><span class="n">fund</span><span class="p">,</span> <span class="n">logger_sqlalchemy</span><span class="p">))</span>
+        <span class="n">logger_sqlalchemy</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">exception_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="mi">412</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Api down please try after sometime..!!&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">exception_json</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_bbg_records_from_db"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.get_bbg_records_from_db">[docs]</a><span class="k">def</span> <span class="nf">get_bbg_records_from_db</span><span class="p">(</span><span class="n">TickerISIN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    This is an api for fetch name,currency and  last price from db.</span>
+
+<span class="sd">    :param TickerISIN: TickerISIN</span>
+<span class="sd">    :return: name,currency and  last price</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">database_dev</span><span class="p">()</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;select top 1 * from [OUTSYS_DEVELOP].DBO.[OSUSR_BOL_CONTROLTICKER_ISIN]  where [TICKERREQUESTED] =&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
+            <span class="n">TickerISIN</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39; order by DATETIME  desc&quot;</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">rec</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Name</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name: &#39;</span><span class="p">,</span> <span class="n">Name</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">Name</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">currency</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;currency: &#39;</span><span class="p">,</span> <span class="n">currency</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">currency</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Last_price</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Last_price: &#39;</span><span class="p">,</span> <span class="n">Last_price</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">Last_price</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">Name</span><span class="p">,</span> <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="n">currency</span><span class="p">,</span> <span class="s2">&quot;Last_price&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">Last_price</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">exception_json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Api down please try after sometime..!!&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">exception_json</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_bbg_records"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.get_bbg_records">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/get_bbg_records&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_bbg_records</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    This is an api for fetch name,currency and  last price from bbg.</span>
+<span class="sd">    :return: name,currency and  last price.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TickerISIN</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;TickerISIN&#39;</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://172.16.20.90:8080/InstrumentInfo&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Code&quot;</span><span class="p">:</span> <span class="n">TickerISIN</span><span class="p">})</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+            <span class="n">mytree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementTree</span><span class="p">(</span><span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">mytree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">att</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">NAME</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;NAME&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NAME: &#39;</span><span class="p">,</span> <span class="n">NAME</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">CRNCY</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CRNCY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CRNCY: &#39;</span><span class="p">,</span> <span class="n">CRNCY</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">CRNCY</span> <span class="o">=</span> <span class="s1">&#39;Null&#39;</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">PX_LAST</span> <span class="o">=</span> <span class="n">att</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;PX_LAST&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PX_LAST: &#39;</span><span class="p">,</span> <span class="n">PX_LAST</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">PX_LAST</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+
+                    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">NAME</span><span class="p">,</span> <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="n">CRNCY</span><span class="p">,</span> <span class="s2">&quot;Last_price&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">PX_LAST</span><span class="p">)}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">context</span> <span class="o">=</span> <span class="n">get_bbg_records_from_db</span><span class="p">(</span><span class="n">TickerISIN</span><span class="p">)</span>
+                <span class="c1"># context = {&quot;Result&quot;: &quot;BBG Workstation down&quot;}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="n">get_bbg_records_from_db</span><span class="p">(</span><span class="n">TickerISIN</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">context</span><span class="p">),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="treader_edit_pop"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.treader_edit_pop">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/treader_edit_pop&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">treader_edit_pop</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Edit popup api</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">req_data</span><span class="p">)</span>
+        <span class="n">OrderID</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OrderID&quot;</span><span class="p">)</span>
+        <span class="n">BrokerID</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BrokerID&quot;</span><span class="p">)</span>
+        <span class="n">ChangeBroker</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ChangeBroker&quot;</span><span class="p">)</span>
+        <span class="n">InsertExecution</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;InsertExecution&quot;</span><span class="p">)</span>
+        <span class="n">ExecutedQuantity</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ExecutedQuantity&quot;</span><span class="p">)</span>
+        <span class="n">ExecutionPrice</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ExecutionPrice&quot;</span><span class="p">)</span>
+        <span class="n">NothingDone</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NothingDone&quot;</span><span class="p">)</span>
+        <span class="n">ValueDate</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ValueDate&quot;</span><span class="p">)</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
+        <span class="n">user_name</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">fund_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fund_id&quot;</span><span class="p">)</span>
+        <span class="n">fund_number</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fund_number&quot;</span><span class="p">)</span>
+        <span class="n">Multiplier</span> <span class="o">=</span> <span class="n">req_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Multiplier&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">trading_popups</span><span class="p">(</span><span class="n">OrderID</span><span class="o">=</span><span class="n">OrderID</span><span class="p">,</span> <span class="n">BrokerID</span><span class="o">=</span><span class="n">BrokerID</span><span class="p">,</span> <span class="n">ChangeBroker</span><span class="o">=</span><span class="n">ChangeBroker</span><span class="p">,</span>
+                                  <span class="n">InsertExecution</span><span class="o">=</span><span class="n">InsertExecution</span><span class="p">,</span> <span class="n">Multiplier</span><span class="o">=</span><span class="n">Multiplier</span><span class="p">,</span>
+                                  <span class="n">ExecutedQuantity</span><span class="o">=</span><span class="n">ExecutedQuantity</span><span class="p">,</span> <span class="n">ExecutionPrice</span><span class="o">=</span><span class="n">ExecutionPrice</span><span class="p">,</span>
+                                  <span class="n">NothingDone</span><span class="o">=</span><span class="n">NothingDone</span><span class="p">,</span> <span class="n">fund_number</span><span class="o">=</span><span class="n">fund_number</span><span class="p">,</span>
+                                  <span class="n">ValueDate</span><span class="o">=</span><span class="n">ValueDate</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_name</span><span class="o">=</span><span class="n">user_name</span><span class="p">,</span> <span class="n">fund_id</span><span class="o">=</span><span class="n">fund_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="OrderReceivedOnTradingDeskApi"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.OrderReceivedOnTradingDeskApi">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/OrderReceivedOnTradingDesk&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">OrderReceivedOnTradingDeskApi</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    OrderReceivedOnTradingDeskApi process api which set order status Working suggestion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">order_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;orderId&#39;</span><span class="p">]</span>
+        <span class="n">Username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">OrderReceivedOnTradingDesk</span><span class="p">(</span><span class="n">OrderID</span><span class="o">=</span><span class="n">order_id</span><span class="p">,</span> <span class="n">Username</span><span class="o">=</span><span class="n">Username</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="Approving_order"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.Approving_order">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/approving_order&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">Approving_order</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Approving order stage api.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">order_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;orderId&#39;</span><span class="p">]</span>
+        <span class="n">Username</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">OrdersApproving</span><span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="n">order_id</span><span class="p">,</span> <span class="n">UserId</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">Username</span><span class="o">=</span><span class="n">Username</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="Reject_order"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.Reject_order">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/rejecting_order&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">Reject_order</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rejecting order stage api.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">order_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;orderId&#39;</span><span class="p">]</span>
+        <span class="n">Username</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">OrdersRejecting</span><span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="n">order_id</span><span class="p">,</span> <span class="n">UserId</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">Username</span><span class="o">=</span><span class="n">Username</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="Cancel_order"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.Cancel_order">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/cancel_order&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">Cancel_order</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cancel order stage api.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">order_id</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;orderId&#39;</span><span class="p">]</span>
+        <span class="n">Username</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">OrdersCancel</span><span class="p">(</span><span class="n">order_id</span><span class="o">=</span><span class="n">order_id</span><span class="p">,</span><span class="n">Username</span><span class="o">=</span><span class="n">Username</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="fx_hedging_api"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.fx_hedging_api">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/fx_hedging&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">fx_hedging_api</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">FundID</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;fundId&#39;</span><span class="p">]</span>
+        <span class="n">FundCode</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;fundCode&#39;</span><span class="p">]</span>
+        <span class="n">curncy1</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;curncy1&#39;</span><span class="p">]</span>
+        <span class="n">curncy2</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;curncy2&#39;</span><span class="p">]</span>
+        <span class="n">side</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;side&#39;</span><span class="p">]</span>
+        <span class="n">amount</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">]</span>
+        <span class="n">amountCounterValue</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;amountCounterValue&#39;</span><span class="p">]</span>
+        <span class="n">bbg_PxLast</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;bbg_PxLast&#39;</span><span class="p">]</span>
+        <span class="n">tradeDate</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;tradeDate&#39;</span><span class="p">]</span>
+        <span class="n">ValueDate</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;valueDate&#39;</span><span class="p">]</span>
+        <span class="n">executionPrice</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;executionPrice&#39;</span><span class="p">]</span>
+        <span class="n">swap</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;swap&#39;</span><span class="p">]</span>
+        <span class="n">hedgingPurposes</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;hedgingPurposes&#39;</span><span class="p">]</span>
+        <span class="n">userId</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;userId&#39;</span><span class="p">]</span>
+        <span class="n">EnableSwap</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;EnableSwap&#39;</span><span class="p">]</span>
+        <span class="n">Username</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;userName&#39;</span><span class="p">]</span>
+        <span class="n">fundName</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;fundName&#39;</span><span class="p">]</span>
+        <span class="n">Limit</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># ?</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">fx_hedging</span><span class="p">(</span><span class="n">FundID</span><span class="o">=</span><span class="n">FundID</span><span class="p">,</span> <span class="n">FundCode</span><span class="o">=</span><span class="n">FundCode</span><span class="p">,</span> <span class="n">Amount</span><span class="o">=</span><span class="n">amount</span><span class="p">,</span> <span class="n">EnableSwap</span><span class="o">=</span><span class="n">EnableSwap</span><span class="p">,</span>
+                              <span class="n">ValueDate</span><span class="o">=</span><span class="n">ValueDate</span><span class="p">,</span><span class="n">userId</span><span class="o">=</span><span class="n">userId</span><span class="p">,</span> <span class="n">Curncy1</span><span class="o">=</span><span class="n">curncy1</span><span class="p">,</span> <span class="n">Curncy2</span><span class="o">=</span><span class="n">curncy2</span><span class="p">,</span>
+                              <span class="n">TradeDate</span><span class="o">=</span><span class="n">tradeDate</span><span class="p">,</span> <span class="n">Limit</span><span class="o">=</span><span class="n">Limit</span><span class="p">,</span> <span class="n">DB_LastPrice</span><span class="o">=</span><span class="n">bbg_PxLast</span><span class="p">,</span> <span class="n">ExecutionPrice</span><span class="o">=</span><span class="n">executionPrice</span><span class="p">,</span>
+                              <span class="n">HedgingPurposes</span><span class="o">=</span><span class="n">hedgingPurposes</span><span class="p">,</span><span class="n">side</span><span class="o">=</span><span class="n">side</span><span class="p">,</span><span class="n">Username</span><span class="o">=</span><span class="n">Username</span><span class="p">,</span><span class="n">fundName</span><span class="o">=</span><span class="n">fundName</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="get_documents"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.get_documents">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/documents&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_documents</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    display developer doc api.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">my_file</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;C:\Users\Aress\Projects\_build\html\index.html&quot;</span>
+        <span class="k">return</span> <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">my_file</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Document not available for now, please try after sometimes..!!&#39;</span><span class="p">),</span> <span class="mi">400</span></div>
+
+
+<div class="viewcode-block" id="get_currency_record"><a class="viewcode-back" href="../python_script_rst/fundapi.html#fundapi.get_currency_record">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/get_currency_record&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_currency_record</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">req_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">curncy1</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;curncy1&#39;</span><span class="p">]</span>
+        <span class="n">curncy2</span> <span class="o">=</span> <span class="n">req_data</span><span class="p">[</span><span class="s1">&#39;curncy2&#39;</span><span class="p">]</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">currency_calculation</span><span class="p">(</span><span class="n">curncy1</span><span class="o">=</span><span class="n">curncy1</span><span class="p">,</span> <span class="n">curncy2</span><span class="o">=</span><span class="n">curncy2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;Result&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">400</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1">#app.run(host=&quot;172.16.5.21&quot;, port=5022, threaded=True)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">5008</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, shraddha joshi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

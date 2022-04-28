@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>email_send_service &mdash; Banor Documents 1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Banor Documents
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python_script_rst/modules.html">Funds</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Banor Documents</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>email_send_service</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for email_send_service</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<div class="viewcode-block" id="sendemail"><a class="viewcode-back" href="../python_script_rst/email_send_service.html#email_send_service.sendemail">[docs]</a><span class="k">def</span> <span class="nf">sendemail</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span><span class="n">title</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    In this function, email send with context message of various process.</span>
+
+<span class="sd">    :param subject: subject</span>
+<span class="sd">    :param title:  title</span>
+<span class="sd">    :return:  Email send with context.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Destinatari</span> <span class="o">=</span> <span class="s1">&#39;ashutosh.pagare@banorcapital.com&#39;</span>  <span class="c1"># &#39;oliver.silvey@banorcapital.com&#39; # &#39;wenyan.hao@banorcapital.com&#39; # &#39;dario.giannini@banor.it, roberto.bianchi@banor.it&#39;   #   &#39;oliver.silvey@banorcapital.com&#39; #</span>
+
+    <span class="c1"># recipients = [&quot;andrea.geninatti@banor.it&quot;, &quot;simone.cavallarin@banorcapital.com&quot;]  &#39;wenyan.hao@banorcapital.com&#39; #</span>
+
+    <span class="n">cc</span> <span class="o">=</span> <span class="s1">&#39;ashutosh.pagare@banorcapital.com&#39;</span>  <span class="c1"># &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com, ashutosh.pagare@banorcapital.com&#39; #  &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com&#39; #   &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com&#39; #  &#39;wenyan.hao@banorcapital.com&#39; #  &#39;giacomo.mergoni@banorcapital.com, james.george@banorcapital.com, banorsicav@banorcapital.com&#39;  #  &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com&#39; #</span>
+
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Destinatari</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">Destinatari</span>
+    <span class="n">Subj</span> <span class="o">=</span> <span class="n">subject</span>
+    <span class="n">emsg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;str: &#39;</span><span class="p">,</span> <span class="n">emsg</span><span class="p">)</span>
+    <span class="n">Txt</span> <span class="o">=</span> <span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+    <span class="n">Sender</span> <span class="o">=</span> <span class="s1">&#39;bps@banorcapital.com&#39;</span>
+    <span class="n">hostsys</span> <span class="o">=</span> <span class="s1">&#39;relay.banorcapital.com&#39;</span>
+    <span class="n">email_title</span> <span class="o">=</span> <span class="n">title</span> <span class="k">if</span> <span class="n">title</span> <span class="k">else</span>  <span class="kc">None</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Txt</span>  <span class="c1"># build_table(gdp_data, &#39;blue_light&#39;, font_size = &#39;10px&#39;, text_align = &#39;right&#39;)</span>
+
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sender</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># formatdate(localtime=True)</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Subj</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">email_title</span>
+    <span class="c1"># outer[&#39;body&#39;] = non funziona</span>
+
+    <span class="c1"># Txt = text</span>
+
+    <span class="c1"># body = MIMEText(Txt, &quot;html&quot;) # convert the body to a MIME compatible string</span>
+    <span class="c1"># body = MIMEText(Txt)  # convert the body to a MIME compatible string</span>
+    <span class="c1"># outer.attach(body)  # attach it to your main message</span>
+
+    <span class="c1"># outer.preamble = &#39;You will not see this in a MIME-aware mail reader.&#39;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open one of the attachments. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+
+    <span class="n">composed</span> <span class="o">=</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+    <span class="n">Server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">hostsys</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;logged in!&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to log in. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">Sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;email sent...&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to send the email. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">Server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<span class="c1"># subject = &quot;La determinazione del broker Equity cash non ha funzionato&quot;</span>
+<span class="c1"># title = &quot;Cerca di risolvere andando ad editare la selezione del Broker Cash&quot;</span>
+<span class="c1"># sendemail(subject,title)</span>
+
+
+<div class="viewcode-block" id="Email_Send_ErrorAlarm"><a class="viewcode-back" href="../python_script_rst/email_send_service.html#email_send_service.Email_Send_ErrorAlarm">[docs]</a><span class="k">def</span> <span class="nf">Email_Send_ErrorAlarm</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send email while error occurred.</span>
+<span class="sd">    :param subject: subject</span>
+<span class="sd">    :param title: title</span>
+<span class="sd">    :return: email send with error context.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Destinatari</span> <span class="o">=</span> <span class="s1">&#39;ashutosh.pagare@banorcapital.com&#39;</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="s1">&#39;ashutosh.pagare@banorcapital.com&#39;</span>
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Destinatari</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">Destinatari</span>
+    <span class="n">Subj</span> <span class="o">=</span> <span class="n">subject</span>
+    <span class="n">emsg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;str: &#39;</span><span class="p">,</span> <span class="n">emsg</span><span class="p">)</span>
+    <span class="n">Txt</span> <span class="o">=</span> <span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+    <span class="n">Sender</span> <span class="o">=</span> <span class="s1">&#39;bps@banorcapital.com&#39;</span>
+    <span class="n">hostsys</span> <span class="o">=</span> <span class="s1">&#39;relay.banorcapital.com&#39;</span>
+    <span class="n">email_title</span> <span class="o">=</span> <span class="n">title</span> <span class="k">if</span> <span class="n">title</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Txt</span>  <span class="c1"># build_table(gdp_data, &#39;blue_light&#39;, font_size = &#39;10px&#39;, text_align = &#39;right&#39;)</span>
+
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sender</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># formatdate(localtime=True)</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Subj</span>
+    <span class="c1"># outer[&#39;Title&#39;] = email_title</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Fund&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;North America&quot;</span>
+    <span class="c1"># outer[&#39;body&#39;] = non funziona</span>
+
+    <span class="c1"># Txt = text</span>
+
+    <span class="n">body</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">Txt</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">)</span>  <span class="c1"># convert the body to a MIME compatible string</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">Txt</span><span class="p">)</span>  <span class="c1"># convert the body to a MIME compatible string</span>
+    <span class="n">outer</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>  <span class="c1"># attach it to your main message</span>
+
+    <span class="c1"># outer.preamble = &#39;You will not see this in a MIME-aware mail reader.&#39;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open one of the attachments. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+
+    <span class="n">composed</span> <span class="o">=</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+    <span class="n">Server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">hostsys</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;logged in!&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to log in. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">Sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;email sent...&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to send the email. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">Server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<span class="c1"># subject = &quot;La determinazione del broker Equity cash non ha funzionato&quot;</span>
+<span class="c1"># title = &quot;Cerca di risolvere andando ad editare la selezione del Broker Cash&quot;</span>
+<span class="c1"># sendemail(subject,title)</span>
+
+<div class="viewcode-block" id="Emails_Send"><a class="viewcode-back" href="../python_script_rst/email_send_service.html#email_send_service.Emails_Send">[docs]</a><span class="k">def</span> <span class="nf">Emails_Send</span><span class="p">(</span><span class="n">subject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param subject:</span>
+<span class="sd">    :return:  send  email</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Destinatari</span> <span class="o">=</span> <span class="s2">&quot;simone.cavallarin@banorcapital.com&quot;</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="s1">&#39;ashutosh.pagare@banorcapital.com&#39;</span>  <span class="c1"># &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com, ashutosh.pagare@banorcapital.com&#39; #  &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com&#39; #   &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com&#39; #  &#39;wenyan.hao@banorcapital.com&#39; #  &#39;giacomo.mergoni@banorcapital.com, james.george@banorcapital.com, banorsicav@banorcapital.com&#39;  #  &#39;wenyan.hao@banorcapital.com, simone.cavallarin@banorcapital.com&#39; #</span>
+
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Destinatari</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">Destinatari</span>
+    <span class="n">Subj</span> <span class="o">=</span> <span class="n">subject</span>
+    <span class="n">emsg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;str: &#39;</span><span class="p">,</span> <span class="n">emsg</span><span class="p">)</span>
+    <span class="n">Sender</span> <span class="o">=</span> <span class="s1">&#39;bps@banorcapital.com&#39;</span>
+    <span class="n">hostsys</span> <span class="o">=</span> <span class="s1">&#39;relay.banorcapital.com&#39;</span>
+    <span class="n">email_title</span> <span class="o">=</span> <span class="s2">&quot;Not able to determinate correct fund&quot;</span>
+
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sender</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># formatdate(localtime=True)</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Subj</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">email_title</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open one of the attachments. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+
+    <span class="n">composed</span> <span class="o">=</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+    <span class="n">Server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">hostsys</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;logged in!&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to log in. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">Sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;email sent...&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to send the email. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">Server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Email_Send_Advisory"><a class="viewcode-back" href="../python_script_rst/email_send_service.html#email_send_service.Email_Send_Advisory">[docs]</a><span class="k">def</span> <span class="nf">Email_Send_Advisory</span><span class="p">(</span><span class="n">IsLogContent</span><span class="p">,</span> <span class="n">FundName</span><span class="p">,</span> <span class="n">To</span><span class="p">,</span><span class="n">BuySell</span><span class="p">,</span> <span class="n">Ticker</span><span class="p">,</span> <span class="n">StockName</span><span class="p">,</span> <span class="n">PreviousWeight</span><span class="p">,</span> <span class="n">NewWeight</span><span class="p">,</span> <span class="n">IntrumentType</span><span class="p">,</span>
+                        <span class="n">Message</span><span class="p">,</span> <span class="n">Urgency</span><span class="p">,</span> <span class="n">SuggestionGenerated</span><span class="p">,</span> <span class="n">PairTrade</span><span class="p">,</span> <span class="n">QuantityIndicated</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param IsLogContent:  IsLogContent</span>
+<span class="sd">    :param FundName: Fund name</span>
+<span class="sd">    :param To:  receiver</span>
+<span class="sd">    :param BuySell:  BuySell</span>
+<span class="sd">    :param Ticker:  TickerISIN</span>
+<span class="sd">    :param StockName:  Stock name</span>
+<span class="sd">    :param PreviousWeight: PreviousWeight</span>
+<span class="sd">    :param NewWeight:  NewWeight</span>
+<span class="sd">    :param IntrumentType: IntrumentType</span>
+<span class="sd">    :param Message:  Message</span>
+<span class="sd">    :param Urgency: Urgency</span>
+<span class="sd">    :param SuggestionGenerated:  SuggestionGenerated</span>
+<span class="sd">    :param PairTrade:  PairTrade</span>
+<span class="sd">    :param QuantityIndicated:  QuantityIndicated</span>
+<span class="sd">    :return: Send mail with Advisory</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">To</span> <span class="o">=</span> <span class="n">To</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="s2">&quot;davide.verardi@banor.it; Tomaso.Mariotti@banor.it; nicolo.digiacomo@banor.it&quot;</span>
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">To</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">To</span>
+    <span class="n">Subj</span> <span class="o">=</span> <span class="s2">&quot;Sys : Advisory&quot;</span>
+    <span class="n">Sender</span> <span class="o">=</span> <span class="s2">&quot;sys@banorcapital.com&quot;</span>
+    <span class="n">hostsys</span> <span class="o">=</span> <span class="s1">&#39;relay.banorcapital.com&#39;</span>
+
+    <span class="n">emsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;html&gt; &lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;br&gt;</span>
+<span class="s2">    </span>
+<span class="s2">       &lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;IsLogContent:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">IsLogContent</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;FundName:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">FundName</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;BuySell:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">BuySell</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Ticker:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Ticker</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;StockName:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">StockName</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;PreviousWeight:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">PreviousWeight</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;NewWeight:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">NewWeight</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;IntrumentType:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">IntrumentType</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Message:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Message</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Urgency:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Urgency</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;SuggestionGenerated:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">SuggestionGenerated</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;PairTrade:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">PairTrade</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;QuantityIndicated:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">QuantityIndicated</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;str: &#39;</span><span class="p">,</span> <span class="n">emsg</span><span class="p">)</span>
+
+    <span class="n">Txt</span> <span class="o">=</span> <span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Txt</span>  <span class="c1"># build_table(gdp_data, &#39;blue_light&#39;, font_size = &#39;10px&#39;, text_align = &#39;right&#39;)</span>
+
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sender</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># formatdate(localtime=True)</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Subj</span>
+    <span class="c1"># outer[&#39;body&#39;] = non funziona</span>
+
+    <span class="n">Txt</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="c1"># body = MIMEText(Txt, &quot;html&quot;) # convert the body to a MIME compatible string</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">Txt</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">)</span>  <span class="c1"># convert the body to a MIME compatible string</span>
+    <span class="n">outer</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>  <span class="c1"># attach it to your main message</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open one of the attachments. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+
+    <span class="n">composed</span> <span class="o">=</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+    <span class="n">Server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">hostsys</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;logged in!&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to log in. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">Sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;email sent...&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to send the email. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">Server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Email_Send_Advisory_Medata"><a class="viewcode-back" href="../python_script_rst/email_send_service.html#email_send_service.Email_Send_Advisory_Medata">[docs]</a><span class="k">def</span> <span class="nf">Email_Send_Advisory_Medata</span><span class="p">(</span><span class="n">fetch_order_rec</span><span class="p">,</span><span class="n">To</span><span class="p">,</span><span class="n">cc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param fetch_order_rec:  records of advisory</span>
+<span class="sd">    :param To: receiver</span>
+<span class="sd">    :param cc:</span>
+<span class="sd">    :return: send mail as advisory metadata</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">To</span> <span class="o">=</span> <span class="n">To</span>
+    <span class="c1"># cc = &quot;davide.verardi@banor.it; Tomaso.Mariotti@banor.it; nicolo.digiacomo@banor.it&quot;</span>
+    <span class="n">cc</span> <span class="o">=</span><span class="n">cc</span>
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">To</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">To</span>
+    <span class="n">Subj</span> <span class="o">=</span> <span class="s2">&quot;Sys : Advisory - Suggestion has been modified&quot;</span>
+    <span class="n">Sender</span> <span class="o">=</span> <span class="s2">&quot;sys@banorcapital.com&quot;</span>
+    <span class="n">hostsys</span> <span class="o">=</span> <span class="s1">&#39;relay.banorcapital.com&#39;</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fetch_order_rec</span><span class="p">):</span>
+        <span class="n">ordrec</span> <span class="o">=</span> <span class="n">fetch_order_rec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">FundName</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">45</span><span class="p">]</span>
+        <span class="n">Buysell</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">Ticker</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">StockName</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">46</span><span class="p">]</span>
+        <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>
+        <span class="n">NewWeight</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">35</span><span class="p">]</span>
+        <span class="n">IntrumentType</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">47</span><span class="p">]</span>
+        <span class="n">Urgency</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">90</span><span class="p">]</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Change of existing suggestion&quot;</span>
+        <span class="n">suggestionGenerated</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">25</span><span class="p">]</span>
+        <span class="n">Instructions</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">38</span><span class="p">]</span>
+        <span class="n">QuantityIndicated</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">23</span><span class="p">]</span>
+        <span class="n">Limit</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">Broker</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">43</span><span class="p">]</span>
+        <span class="n">BrokerShortCode</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">orderId</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bbgSecurityName</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">96</span><span class="p">]</span>
+        <span class="n">ExposureType</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">124</span><span class="p">]</span>
+        <span class="n">bbg_Opt_Undl_px</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span>
+        <span class="n">bbgExchange</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">97</span><span class="p">]</span>
+        <span class="n">Expiry</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">IsRepoLevEuro</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">TradingCommissionsCENT</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">115</span><span class="p">]</span>
+        <span class="n">suggestionType</span> <span class="o">=</span> <span class="n">ordrec</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span>
+
+    <span class="n">emsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;html&gt; &lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;br&gt;</span>
+
+<span class="s2">       &lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;FundName:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">FundName</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Buysell:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Buysell</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Ticker:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Ticker</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;StockName:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">StockName</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Quantity:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Quantity</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;NewWeight:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">NewWeight</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;IntrumentType:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">IntrumentType</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Urgency:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Urgency</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;message:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;suggestionGenerated:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">suggestionGenerated</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Instructions:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Instructions</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;QuantityIndicated:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">QuantityIndicated</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;comment:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">comment</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Limit:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Limit</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Broker:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Broker</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;BrokerShortCode:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">BrokerShortCode</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;bbgSecurityName:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">bbgSecurityName</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;ExposureType:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">ExposureType</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;bbg_Opt_Undl_px:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">bbg_Opt_Undl_px</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;bbgExchange:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">bbgExchange</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;Expiry:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">Expiry</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;IsRepoLevEuro:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">IsRepoLevEuro</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;TradingCommissionsCENT:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">TradingCommissionsCENT</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;tr&gt;&lt;td&gt;suggestionType:&lt;/td&gt;&lt;td&gt;</span><span class="si">{</span><span class="n">suggestionType</span><span class="si">}</span><span class="s2">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="s2">       &lt;/table&gt;&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;str: &#39;</span><span class="p">,</span> <span class="n">emsg</span><span class="p">)</span>
+
+    <span class="n">Txt</span> <span class="o">=</span> <span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Txt</span>  <span class="c1"># build_table(gdp_data, &#39;blue_light&#39;, font_size = &#39;10px&#39;, text_align = &#39;right&#39;)</span>
+
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sender</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Cc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># formatdate(localtime=True)</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Subj</span>
+    <span class="c1"># outer[&#39;body&#39;] = non funziona</span>
+
+    <span class="n">Txt</span> <span class="o">=</span> <span class="n">text</span>
+
+    <span class="c1"># body = MIMEText(Txt, &quot;html&quot;) # convert the body to a MIME compatible string</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">Txt</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">)</span>  <span class="c1"># convert the body to a MIME compatible string</span>
+    <span class="n">outer</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>  <span class="c1"># attach it to your main message</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open one of the attachments. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+
+    <span class="n">composed</span> <span class="o">=</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+    <span class="n">Server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">hostsys</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="c1"># Server.ehlo</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;logged in!&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to log in. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">Sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;email sent...&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to send the email. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">Server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Email_Send_ServiceEmail"><a class="viewcode-back" href="../python_script_rst/email_send_service.html#email_send_service.Email_Send_ServiceEmail">[docs]</a><span class="k">def</span> <span class="nf">Email_Send_ServiceEmail</span><span class="p">(</span><span class="n">Username</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param subject:</span>
+<span class="sd">    :return:  send  email</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Destinatari</span> <span class="o">=</span> <span class="s2">&quot;james.grant@banorcapital.com; james.george@banorcapital.com; simone.cavallarin@banorcapital.com; wenyan.hao@banorcapital.com; david.howells@banorcapital.com&quot;</span>
+    <span class="n">to</span> <span class="o">=</span> <span class="n">Destinatari</span>
+    <span class="n">Subj</span> <span class="o">=</span> <span class="s2">&quot;sys: Advisory NEW FX HAS BEEN INSERTED&quot;</span>
+    <span class="n">Sender</span> <span class="o">=</span> <span class="s2">&quot;sys@banorcapital.com&quot;</span>
+    <span class="n">hostsys</span> <span class="o">=</span> <span class="s1">&#39;relay.banorcapital.com&#39;</span>
+    <span class="n">email_title</span> <span class="o">=</span> <span class="s2">&quot;Fx suggestion inserted by: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Username</span><span class="p">)</span>
+    <span class="n">recipients</span> <span class="o">=</span> <span class="n">to</span>
+
+    <span class="n">outer</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">()</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Sender</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Subj</span>
+    <span class="n">outer</span><span class="p">[</span><span class="s1">&#39;Title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">email_title</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to open one of the attachments. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">raise</span>
+
+    <span class="n">composed</span> <span class="o">=</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+    <span class="n">Server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">hostsys</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="n">Server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">Server</span><span class="o">.</span><span class="n">ehlo</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="s1">&#39;sys&#39;</span><span class="p">,</span> <span class="n">psw</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;logged in!&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to log in. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">Sender</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">outer</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;email sent...&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to send the email. Error: &quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">Server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, shraddha joshi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
