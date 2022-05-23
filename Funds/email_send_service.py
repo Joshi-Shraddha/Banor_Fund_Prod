@@ -28,10 +28,8 @@ def sendemail(subject,title):
     Txt = (emsg)
     Sender = 'bps@banorcapital.com'
     hostsys = 'relay.banorcapital.com'
-    email_title = title if title else  None
-
+    email_title = title if title else None
     text = Txt  # build_table(gdp_data, 'blue_light', font_size = '10px', text_align = 'right')
-
     outer = MIMEMultipart()
     outer['From'] = Sender
     outer['To'] = to
@@ -39,16 +37,6 @@ def sendemail(subject,title):
     outer['Date'] = ''  # formatdate(localtime=True)
     outer['Subject'] = Subj
     outer['Title'] = email_title
-    # outer['body'] = non funziona
-
-    # Txt = text
-
-    # body = MIMEText(Txt, "html") # convert the body to a MIME compatible string
-    # body = MIMEText(Txt)  # convert the body to a MIME compatible string
-    # outer.attach(body)  # attach it to your main message
-
-    # outer.preamble = 'You will not see this in a MIME-aware mail reader.'
-
     try:
         print("done")
     except:
@@ -270,7 +258,6 @@ def Email_Send_Advisory(IsLogContent, FundName, To,BuySell, Ticker, StockName, P
 
     Txt = text
 
-    # body = MIMEText(Txt, "html") # convert the body to a MIME compatible string
     body = MIMEText(Txt, 'html')  # convert the body to a MIME compatible string
     outer.attach(body)  # attach it to your main message
     try:
@@ -374,7 +361,7 @@ def Email_Send_Advisory_Medata(fetch_order_rec,To,cc):
        <tr><td>suggestionType:</td><td>{suggestionType}</td></tr>
        </table></body></html>"""
 
-    print('str: ', emsg)
+    # print('str: ', emsg)
 
     Txt = (emsg)
     text = Txt  # build_table(gdp_data, 'blue_light', font_size = '10px', text_align = 'right')

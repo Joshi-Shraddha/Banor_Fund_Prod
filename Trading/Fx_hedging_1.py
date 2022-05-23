@@ -1,14 +1,24 @@
 import pymssql
 import requests
 import xml.etree.ElementTree as ET
-from Funds.configuration import get_current_time, get_current_date,get_current_date_time
+from Funds.configuration import database_dev,get_current_time, get_current_date,get_current_date_time
 from Funds.email_send_service import Email_Send_ServiceEmail
 
-conn4 = pymssql.connect('172.16.5.4', 'Aress', 'Aress2020', "OUTSYS_DEVELOP")
+conn4 = database_dev()
 cursor4 = conn4.cursor()
 
 
 def fx_CurrencyConvention(Currency_1, Currency_2):
+    """
+        In this method we concatenate two currencies.
+        ex- USDEUR Curncy = USD + EUR Curncy
+
+        :param Currency_1: Currency type one
+        :param Currency_2: Currency type two
+
+        :return: return Concatenated currencies as a ticker.
+
+        """
     if Currency_1 == "EUR":
         Curr_1_Points = 10
     if Currency_1 == "GBP":
@@ -42,6 +52,8 @@ def fx_CurrencyConvention(Currency_1, Currency_2):
 
 def Hex_To_Decimal(string):
     """
+    In method used to perform Hex to decimal conversion.
+
     :param string: input para.
     :return:  convert Hex to decimal
     """
@@ -55,6 +67,13 @@ def Hex_To_Decimal(string):
 
 
 def bbg_call(Ticker):
+    """
+        In this method BBG workstation called to fetch data based on Ticker.
+
+        :param Ticker: Ticker
+
+        :return: returns list of values.
+    """
     response = requests.get("http://172.16.20.10:8080/InstrumentInfo", params={"Code": Ticker})
 
     if response.status_code != 200:
@@ -121,8 +140,15 @@ def bbg_call(Ticker):
 
 
 def get_rec_from_db(TickerISIN):
+    """
+     In this method, records are fetched from the database OSUSR_BOL_CURRENCY table while the BBG workstation down.
+
+    :param TickerISIN:
+
+    :return: Return list of values.
+    """
     query = ("SELECT TOP (1) [ID],[DATE],[TICKER],[NAME],[PX_LAST],[SECURITY_TYP],[SETTLE_DT],[MARKET_SECOTR_DES],[CURRENCY1],[CURRENCY2],[TIME]"
-             " FROM [outsys_develop].[dbo].[OSUSR_BOL_CURRENCY] Where TICKER = '" + str(TickerISIN) + "' order by DATE  desc")
+             " FROM [outsys_prod].[dbo].[OSUSR_BOL_CURRENCY] Where TICKER = '" + str(TickerISIN) + "' order by DATE  desc")
     cursor4.execute(query)
     rec = cursor4.fetchone()
     print(rec)
@@ -178,6 +204,14 @@ def get_rec_from_db(TickerISIN):
 
 
 def Http_Server_wst01(sTickerISIN):
+    """
+        This method internally called bbg_call and get_rec_from_db to fetch SecurityName, Crncy, Country,Security_typ,
+        Px_Last and Settle_Date values.
+
+        :param sTickerISIN: TickerISIN
+
+        :return: return values of dict.
+        """
     TickerISIN = sTickerISIN
     if (TickerISIN == "" or TickerISIN == " " or TickerISIN == "  "
             or TickerISIN == " Equity" or TickerISIN == " Corp" or
@@ -212,6 +246,32 @@ def Http_Server_wst01(sTickerISIN):
 def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Amount, Side, Currency1, Currency2,
                            TradeDate, ValueDate, BBG_PxLast_OnScreen, UserID, Swap, SwapID, HedgingPurposes, Limit,
                            LongLeg, ShortLeg,fundName):
+    """
+    In this method, record inserted into OSUSR_SKP_FORWARD if the matching record present then we are updating the
+    record else insert new entry.
+
+    :param FundID: Fund id
+    :param FundSimpleCode:  gund code
+    :param ForwardID: forward id
+    :param ExecutionPrice:  Execution Price
+    :param Amount: Amount
+    :param Side: Side
+    :param Currency1: Currency type 1
+    :param Currency2: Currency type 2
+    :param TradeDate: TradeDate
+    :param ValueDate: ValueDate
+    :param BBG_PxLast_OnScreen: PxLast
+    :param UserID: user id
+    :param Swap: Boolean value if swap enable its true else false
+    :param SwapID:
+    :param HedgingPurposes: Hedging Purposes is Boolean value
+    :param Limit:
+    :param LongLeg: Boolean value if LongLeg selected it's true.
+    :param ShortLeg: Boolean value if ShortLeg selected it's true.
+    :param fundName: FundName
+
+    :return: Return pcForwardIDout for created and updated forward instance.
+    """
     FXTicker_Convention = fx_CurrencyConvention(Currency_1=Currency1, Currency_2=Currency2)
     Http_Server_wst01_repose = Http_Server_wst01(sTickerISIN=FXTicker_Convention)
     SecurityName = Http_Server_wst01_repose['SecurityName']
@@ -220,23 +280,16 @@ def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Am
     Security_typ = Http_Server_wst01_repose['Security_typ']
     Settle_Date = Http_Server_wst01_repose['Settle_Date']
     Px_Last = Http_Server_wst01_repose['Px_Last']
-
-    # SecurityName = 'EUR-USD X-RATE'
-    # Crncy = 'SD CUR'
-    # Country = 'Itely'
-    # Security_typ = 'CROSS'
-    # Settle_Date = '2021-10-27 00:00:00.000'
-    # Px_Last = '1.16460000'
-
     Ticker_ISIN = FXTicker_Convention
     # BBG_PxLast_OnScreen = Http_Server_wst01_repose['Px_Last']
-    BBG_PxLast_OnScreen = '1.16460000'
+    # BBG_PxLast_OnScreen = '1.16460000'
+    BBG_PxLast_OnScreen = BBG_PxLast_OnScreen
 
     ForwardID = 'NULL' if ForwardID is None else ForwardID
     FundID = 'NULL' if FundID is None else FundID
     select_q = (
             "SELECT [ENFORWARD].[ID] o0, [ENFORWARD].[CURNCY1] o1, [ENFORWARD].[CURNCY2] o2, [ENFORWARD].[SIDE] o3, [ENFORWARD].[AMOUNT] o4, [ENFORWARD].[AMOUNTCOUNTERVALUE] o5, [ENFORWARD].[TRADEDATE] o6, [ENFORWARD].[VALUEDATE] o7, [ENFORWARD].[EXECUTIONPRICE] o8, [ENFORWARD].[PROFITANDLOSS] o9, [ENFORWARD].[DATE] o10, [ENFORWARD].[FUNDID] o11, [ENFORWARD].[DB_LASTPRICE] o12, [ENFORWARD].[TICKER_ISIN] o13, [ENFORWARD].[PERFORMANCE] o14, [ENFORWARD].[EXECUTED] o15, [ENFORWARD].[EXPIRED] o16, [ENFORWARD].[WEIGHT] o17, [ENFORWARD].[FUNDSIMPLECODE] o18, [ENFORWARD].[TIMECREATION] o19, [ENFORWARD].[DATECREATION] o20, [ENFORWARD].[USERID] o21, [ENFORWARD].[ORDERID] o22, [ENFORWARD].[SWAP] o23, [ENFORWARD].[SWAPID] o24, [ENFORWARD].[HEDGINGPURPOSES] o25, [ENFORWARD].[ORDERCREATED] o26, [ENFORWARD].[BDL] o27, [ENFORWARD].[BNP] o28, [ENFORWARD].[BROKERSHORTCODE] o29, [ENFORWARD].[FUNDNAME] o30, [ENFORWARD].[FUNDSPECIFICCLASSNAME] o31, [ENFORWARD].[LIMIT] o32, [ENFORWARD].[BBG_SECURITY_NAME] o33, [ENFORWARD].[BBG_CRNCY] o34, [ENFORWARD].[BBG_COUNTRY] o35, [ENFORWARD].[BBG_SECURITYTYP] o36, [ENFORWARD].[BBG_SETTLEDATE] o37, [ENFORWARD].[BBG_PXLAST] o38, [ENFORWARD].[BBG_BASECRNCY] o39, [ENFORWARD].[LONGLEG] o40, [ENFORWARD].[SHORTLEG] o41, [ENFORWARD].[FXACCOUNTNAME] o42, [ENFORWARD].[CASA4FUND_FUNDNAME] o43, [ENFORWARD].[BNRBROKER] o44, [ENFORWARD].[CASA4FUNDS_BROKER] o45, [ENFORWARD].[ISIN] o46 "
-            "FROM [OUTSYS_DEVELOP].DBO.[OSUSR_SKP_FORWARD] [ENFORWARD] "
+            "FROM [outsys_prod].DBO.[OSUSR_SKP_FORWARD] [ENFORWARD] "
             "WHERE ([ENFORWARD].[ID] = '" + str(ForwardID) + "') AND ([ENFORWARD].[FUNDID] = '" + str(
         FundID) + "')")
     print(select_q)
@@ -248,7 +301,7 @@ def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Am
         try:
             select2_q = (
                     "SELECT [ENFUNDS].[ID] o0, [ENFUNDS].[SIMPLENAME] o1, [ENFUNDS].[NAME] o2, [ENFUNDS].[TICKER] o3, [ENFUNDS].[CRNCY] o4, [ENFUNDS].[CLASS] o5, [ENFUNDS].[FUND_CODE] o6, [ENFUNDS].[ID_ISIN] o7, [ENFUNDS].[FRONT_LOAD_FEE] o8, [ENFUNDS].[BACK_LOAD_FEE] o9, [ENFUNDS].[MNG_FEE] o10, [ENFUNDS].[PERF_FEE] o11, [ENFUNDS].[MNG_FEETILLJUNE14] o12, [ENFUNDS].[PERC_FEETILLJUNE14] o13, [ENFUNDS].[COLLOCAMENTOUBS] o14, [ENFUNDS].[COLLOCAMENTOBANORSIM] o15, [ENFUNDS].[MINFIRSTTIME_INVESTMENT] o16, [ENFUNDS].[STRATEGY] o17, [ENFUNDS].[GEOFOCUSREGION] o18, [ENFUNDS].[ASSETCLASS] o19, [ENFUNDS].[INCEPTIONDATE] o20, [ENFUNDS].[SICAV] o21, [ENFUNDS].[BENCHMARK] o22, [ENFUNDS].[DETAILSCUSTOMBENCHMARKS] o23, [ENFUNDS].[SETTLEMENT] o24, [ENFUNDS].[MORNINGSTARCATEGORY] o25, [ENFUNDS].[CUTOFF] o26, [ENFUNDS].[DEALINGPERIOD] o27, [ENFUNDS].[ADVISOR] o28, [ENFUNDS].[FX_BDL_ACCOUNT] o29, [ENFUNDS].[FX_BNP_ACCOUNT] o30, [ENFUNDS].[BASECURRENCY] o31, [ENFUNDS].[CASA4FUND_FUNDNAME] o32, [ENFUNDS].[JPMORGANACCOUNT] o33, [ENFUNDS].[UBSACCOUNT] o34 "
-                    "FROM [OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS] [ENFUNDS] WHERE ([ENFUNDS].[ID] = " + str(
+                    "FROM [outsys_prod].DBO.[OSUSR_38P_FUNDS] [ENFUNDS] WHERE ([ENFUNDS].[ID] = " + str(
                 FundID) + ") ORDER BY [ENFUNDS].[NAME] ASC ")
             cursor4.execute(select2_q)
             GetFundById = cursor4.fetchall()
@@ -272,11 +325,11 @@ def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Am
                 BnrBroker = "BDL"
                 Casa4Funds_Broker = "BDL"
 
-            q = ("BEGIN  SELECT DISTINCT( [OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS].[SIMPLENAME]),  [OUTSYS_DEVELOP].DBO.["
-                 "OSUSR_38P_FUNDS].[FUND_CODE],  [OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS].[FX_BDL_ACCOUNT],  "
-                 "[OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS].[FX_BNP_ACCOUNT],  [OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS].["
-                 "CASA4FUND_FUNDNAME],  [OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS].[ID_ISIN],  [OUTSYS_DEVELOP].DBO.["
-                 "OSUSR_38P_FUNDS].[SICAV]  FROM  [OUTSYS_DEVELOP].DBO.[OSUSR_38P_FUNDS] "
+            q = ("BEGIN  SELECT DISTINCT( [outsys_prod].DBO.[OSUSR_38P_FUNDS].[SIMPLENAME]),  [outsys_prod].DBO.["
+                 "OSUSR_38P_FUNDS].[FUND_CODE],  [outsys_prod].DBO.[OSUSR_38P_FUNDS].[FX_BDL_ACCOUNT],  "
+                 "[outsys_prod].DBO.[OSUSR_38P_FUNDS].[FX_BNP_ACCOUNT],  [outsys_prod].DBO.[OSUSR_38P_FUNDS].["
+                 "CASA4FUND_FUNDNAME],  [outsys_prod].DBO.[OSUSR_38P_FUNDS].[ID_ISIN],  [outsys_prod].DBO.["
+                 "OSUSR_38P_FUNDS].[SICAV]  FROM  [outsys_prod].DBO.[OSUSR_38P_FUNDS] "
                  "WHERE [FUND_CODE]  = '" + str(FundSimpleCode) + "' END")
             conn4.execcute(q)
             FundList = conn4.fetchall()
@@ -372,7 +425,7 @@ def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Am
 
     if Forward:
 
-        sql = "UPDATE [OUTSYS_DEVELOP].DBO.[OSUSR_SKP_FORWARD] SET Amount = %s, Side = %s, Curncy1 = %s, Curncy2 = %s,TradeDate = %s," \
+        sql = "UPDATE [outsys_prod].DBO.[OSUSR_SKP_FORWARD] SET Amount = %s, Side = %s, Curncy1 = %s, Curncy2 = %s,TradeDate = %s," \
               "ValueDate=%s,ExecutionPrice=%s,FundID=%s,DB_LastPrice=%s,Ticker_ISIN=%s,Expired=%s,Executed=%s," \
               "AmountCounterValue=%s,FundSimpleCode=%s,UserID=%s,Swap=%s,SwapID=%s,HedgingPurposes=%s,FundName=%s,FundSpecificClassName=%s," \
               "BDL=%s,BNP=%s,BrokerShortCode=%s,bbg_Security_Name=%s,bbg_Crncy=%s,bbg_Country=%s,Security_typ=%s,bbg_SettleDate=%s," \
@@ -391,7 +444,7 @@ def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Am
     else:
         try:
             Createfwd_1 = (
-                    "INSERT INTO [OUTSYS_DEVELOP].DBO.[OSUSR_SKP_FORWARD](Amount, Side, Curncy1, Curncy2, "
+                    "INSERT INTO [outsys_prod].DBO.[OSUSR_SKP_FORWARD](Amount, Side, Curncy1, Curncy2, "
                     "ExecutionPrice,FundID,DB_LastPrice,Ticker_ISIN,Expired,Executed,AmountCounterValue,FundSimpleCode,UserID, "
                     "Swap,SwapID,HedgingPurposes,FundName,FundSpecificClassName,BDL,BNP,BrokerShortCode,bbg_Security_Name,"
                     "bbg_Crncy,bbg_Country,bbg_SettleDate,bbg_PxLast,Limit,LongLeg,ShortLeg,FxAccountName,"
@@ -413,15 +466,37 @@ def fx_FundForwardCreation(FundID, FundSimpleCode, ForwardID, ExecutionPrice, Am
             return pcForwardIDout
         except Exception as error:
             print("Database insertion Failed !: {}".format(error))
-            # conn4.rollback()
             return error
         finally:
             pass
-            # conn4.close()
 
 
 def fx_hedging(FundID, FundCode, Amount, ValueDate, userId, EnableSwap, Curncy1, Curncy2, TradeDate, Limit,
                DB_LastPrice, ExecutionPrice, HedgingPurposes, side, Username,fundName):
+    """
+    This method called internally for fx hedging api. In this method validation handle for currency 1 and currency 2
+    type. As well as if fundcode and fundId is not define it will return None. This method internally called
+    fx_FundForwardCreation function to forward creation.
+
+    :param FundID: Fund Id
+    :param FundCode: Fund Code
+    :param Amount: Amount
+    :param ValueDate: Value date
+    :param userId: user id
+    :param EnableSwap: Boolean field to enable swap.
+    :param Curncy1: Currency 1
+    :param Curncy2: Currency 2
+    :param TradeDate:  Trade Date
+    :param Limit: limit
+    :param DB_LastPrice: last price
+    :param ExecutionPrice: execution price
+    :param HedgingPurposes: Boolean field Hedging Purposes
+    :param side: side
+    :param Username: username
+    :param fundName: Fund Name
+
+    :return: return fx_FundForwardCreation response.
+    """
     DB_LastPriceBox = True
     pcForward_Amount = True
     pcForward_AmountCounterValue = True
@@ -434,6 +509,7 @@ def fx_hedging(FundID, FundCode, Amount, ValueDate, userId, EnableSwap, Curncy1,
     MissingSideShortLeg = False
     MissingSideLongLeg = False
     DoubleFundSelection = False
+    fx_response = None
     ForwardID = 0
     SideLongLeg = side
     SideShortLeg = side
@@ -445,7 +521,7 @@ def fx_hedging(FundID, FundCode, Amount, ValueDate, userId, EnableSwap, Curncy1,
             return None
         else:
             get_user_role = (
-                    "select * from [OUTSYS_DEVELOP].DBO.[ossys_User_Role] where USER_ID = '" + str(userId) + "' ")
+                    "select * from [outsys_prod].DBO.[ossys_User_Role] where USER_ID = '" + str(userId) + "' ")
             cursor4.execute(get_user_role)
             user_rec = cursor4.fetchall()
             if user_rec:
@@ -481,8 +557,8 @@ def fx_hedging(FundID, FundCode, Amount, ValueDate, userId, EnableSwap, Curncy1,
                                 pcForward_ValueDate = False
                                 return "Invalid ValueDate type"
                             else:
-                                sql_q = ("BEGIN  SELECT MAX( [OUTSYS_DEVELOP].DBO.[OSUSR_SKP_FORWARD].[SWAPID]) "
-                                         "FROM  [OUTSYS_DEVELOP].DBO.[OSUSR_SKP_FORWARD] END")
+                                sql_q = ("BEGIN  SELECT MAX( [outsys_prod].DBO.[OSUSR_SKP_FORWARD].[SWAPID]) "
+                                         "FROM  [outsys_prod].DBO.[OSUSR_SKP_FORWARD] END")
                                 print(sql_q)
                                 cursor4.execute(sql_q)
                                 SQL1 = cursor4.fetchall()
@@ -512,7 +588,14 @@ def fx_hedging(FundID, FundCode, Amount, ValueDate, userId, EnableSwap, Curncy1,
 
 
 def currency_calculation(curncy1,curncy2):
-    query = ("select top(1) * FROM [outsys_develop].[dbo].[OSUSR_BOL_CURRENCY] "
+    """
+    This method find the difference between two currency.
+
+    :param curncy1: curncy1
+    :param curncy2: curncy2
+    :return: the difference value between two currencies.
+    """
+    query = ("select top(1) * FROM [outsys_prod].[dbo].[OSUSR_BOL_CURRENCY] "
              "where CURRENCY1= '"+str(curncy1)+"' and  CURRENCY2 = '"+str(curncy2)+"'  order by DATE desc")
     cursor4.execute(query)
     rec = cursor4.fetchone()

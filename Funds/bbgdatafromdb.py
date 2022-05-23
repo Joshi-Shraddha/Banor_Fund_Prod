@@ -15,7 +15,7 @@ def get_bbg_records(TickerISIN, fund):
     conn = database_dev()
     cursor = conn.cursor()
     query = (
-        "select top 1 * from [OUTSYS_DEVELOP].DBO.[OSUSR_BOL_CONTROLTICKER_ISIN]  where [TICKERREQUESTED] ='" + str(TickerISIN) + "' order by DATETIME  desc")
+        "select top 1 * from [outsys_prod].DBO.[OSUSR_BOL_CONTROLTICKER_ISIN]  where [TICKERREQUESTED] ='" + str(TickerISIN) + "' order by DATETIME  desc")
     cursor.execute(query)
     rec = cursor.fetchone()
     print(rec)

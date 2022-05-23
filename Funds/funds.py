@@ -1023,73 +1023,82 @@ def Trading_Derivative_Cash(FundNumber, PortfolioBrokerCode):
     :return:  IDcontactForBroker,Custodian,Account based on fundNumber
 
     """
-    print("Trading_Derivative_Cash")
-    conn = database_dev()
-    cursor = conn.cursor()
-    IDcontactForBroker, IDcontactSuggestedBroker = None, None
-    Custodian, Account, C4FBroker, BrokerName, BrokerShortCode, C4FBrokerName, BrokerID, BrokerType_A_B, NeedComment, \
-    BrokerSelReason, ExecutorFactor_Cost = None, None, None, None, None, None, None, None, None, None, None
-    if FundNumber == 1:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-        Account = "22701395"
-    elif FundNumber == 2:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-        Account = 22773802
-    elif FundNumber == 3:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-        Account = 22773801
-    elif FundNumber == 5:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-        Account = "22773804"
-    elif FundNumber == 4:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-        Account = "22773803"
-    elif FundNumber == 8:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-    elif FundNumber == 10:
-        pass
-    elif FundNumber == 6:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-        Account = 22773802
-    elif FundNumber == 11:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-    elif FundNumber == 12:
-        IDcontactForBroker = int(18)
-        Custodian = "NE"
-    else:
-        subject = "La determinazione del broker Equity cash non ha funzionato"
-        title = "Cerca di risolvere andando ad editare la selezione del Broker Cash"
-        sendemail(subject, title)
+    try:
+        print("Trading_Derivative_Cash")
+        conn = database_dev()
+        cursor = conn.cursor()
+        IDcontactForBroker, IDcontactSuggestedBroker = None, None
+        Custodian, Account, C4FBroker, BrokerName, BrokerShortCode, C4FBrokerName, BrokerID, BrokerType_A_B, NeedComment, \
+        BrokerSelReason, ExecutorFactor_Cost = None, None, None, None, None, None, None, None, None, None, None
+        if FundNumber == 1:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+            Account = "22701395"
+        elif FundNumber == 2:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+            Account = 22773802
+        elif FundNumber == 3:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+            Account = 22773801
+        elif FundNumber == 5:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+            Account = "22773804"
+        elif FundNumber == 4:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+            Account = "22773803"
+        elif FundNumber == 8:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+        elif FundNumber == 10:
+            pass
+        elif FundNumber == 6:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+            Account = 22773802
+        elif FundNumber == 11:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+        elif FundNumber == 12:
+            IDcontactForBroker = int(18)
+            Custodian = "NE"
+        else:
+            subject = "La determinazione del broker Equity cash non ha funzionato"
+            title = "Cerca di risolvere andando ad editare la selezione del Broker Cash"
+            # sendemail(subject, title)
 
-    IDcontactForBroker = 0 if IDcontactForBroker is None else IDcontactForBroker
-    GetContactById_query = (
-            "SELECT [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1,[ENBROKER].[MACROFUNCTION] o2, [ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4,"
-            " [ENBROKER].[SHORTCODE] o5, [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, "
-            "[ENBROKER].[ADDRESS] o8, [ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10 FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
-            "WHERE ([ENBROKER].[ID] = " + str(IDcontactForBroker) + ") ORDER BY [ENBROKER].[NAME] ASC ")
-    cursor.execute(GetContactById_query)
-    GetContactById = cursor.fetchall()
-    for d, _ in enumerate(GetContactById):
-        BrokerName = GetContactById[d][3]
-        BrokerShortCode = GetContactById[d][5]
-        C4FBrokerName = GetContactById[d][4]
-        BrokerID = GetContactById[d][0]
+        IDcontactForBroker = 0 if IDcontactForBroker is None else IDcontactForBroker
+        GetContactById_query = (
+                "SELECT [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1,[ENBROKER].[MACROFUNCTION] o2, [ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4,"
+                " [ENBROKER].[SHORTCODE] o5, [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, "
+                "[ENBROKER].[ADDRESS] o8, [ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10 FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
+                "WHERE ([ENBROKER].[ID] = " + str(IDcontactForBroker) + ") ORDER BY [ENBROKER].[NAME] ASC ")
+        cursor.execute(GetContactById_query)
+        GetContactById = cursor.fetchall()
+        for d, _ in enumerate(GetContactById):
+            BrokerName = GetContactById[d][3]
+            BrokerShortCode = GetContactById[d][5]
+            C4FBrokerName = GetContactById[d][4]
+            BrokerID = GetContactById[d][0]
 
-    BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost = Order_Type_A_B(IDcontactSuggestedBroker)
-    BrokerType_A_B = BrokerType_A_B
-    NeedComment = NeedComment
-    BrokerSelReason = BrokerSelReason
-    ExecutorFactor_Cost = ExecutorFactor_Cost
-    return BrokerName, BrokerShortCode, C4FBrokerName, BrokerID, BrokerType_A_B, NeedComment, BrokerSelReason, \
-           ExecutorFactor_Cost, Custodian, Account, C4FBroker
+        BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost = Order_Type_A_B(IDcontactSuggestedBroker)
+        BrokerType_A_B = BrokerType_A_B
+        NeedComment = NeedComment
+        BrokerSelReason = BrokerSelReason
+        ExecutorFactor_Cost = ExecutorFactor_Cost
+        return BrokerName, BrokerShortCode, C4FBrokerName, BrokerID, BrokerType_A_B, NeedComment, BrokerSelReason, \
+               ExecutorFactor_Cost, Custodian, Account, C4FBroker
+    except Exception as e:
+        import sys
+        import os
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(str(e))
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(f"Error on line no. : {exc_tb.tb_lineno} - {exc_type} - {fname}")
+        raise 400
 
 
 def CodesGeneration_Arbor(Col_1, Col_2):
@@ -1497,6 +1506,8 @@ def Broker_Selection(FundCode, InstrType, SecurityType, Ticker, BrokerID_fromPor
     NeedComment, BrokerSelReason, ExecutorFactor_Cost, ExposureTradeID, out_UBS_Account, out_LeiReportingCode, \
     out_BrokerCodeLevEuro, out_masterAgreement, out_masterAgreementVersionDate = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
     IDcontactSuggestedBroker = BrokerSuggestedByUser
+    Bol_BrokerAssigned = False
+    BrokerId = None
     if InstrType == "SW":
         ExposureTradeIDResult = Swap_Exposure(FundCode)
         ExposureTradeID = ExposureTradeIDResult.ExposureTradeID
@@ -1687,6 +1698,7 @@ def Broker_Selection(FundCode, InstrType, SecurityType, Ticker, BrokerID_fromPor
                                     continue
 
                             if Bol_BrokerAssigned:
+                                BrokerId = BrokerId if BrokerId else 'NULL'
 
                                 GetBrokerById = (
                                         " SELECT [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1, [ENBROKER].[MACROFUNCTION] o2, [ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4, [ENBROKER].[SHORTCODE] o5, [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, [ENBROKER].[ADDRESS] o8, [ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10, [ENBROKER].[MAILINGLIST_SIT_BANORCAP] o11, [ENBROKER].[CREATEDON] o12, [ENBROKER].[UPDATEDON] o13, [ENBROKER].[FAX] o14, [ENBROKER].[CONSISTENCYISSUE] o15, [ENBROKER].[UPDATEDBY] o16, [ENBROKER].[LASTSYSTOSALSEFORCECON] o17, [ENBROKER].[IDWITHISSUES] o18, [ENBROKER].[SF_ID] o19, [ENBROKER].[DELETEDONSF] o20, [ENBROKER].[SF_LASTUPDATING] o21, [ENBROKER].[HEADQUARTER] o22, [ENBROKER].[COMPANYSIZE] o23, [ENBROKER].[WEBSITE] o24, [ENBROKER].[DO_CREATE] o25, [ENBROKER].[DO_UPDATE] o26, [ENBROKER].[KEYWORD] o27, [ENBROKER].[EMAIL] o28, [ENBROKER].[ACTIVEINCONSISTENCY] o29, [ENBROKER].[CREATEDBY] o30, [ENBROKER].[ISDA] o31, [ENBROKER].[SWAPEXPOSURE] o32, [ENBROKER].[SWAPPOOL] o33, [ENBROKER].[DELETEDFROMCRM] o34, [ENBROKER].[SUPPLIER] o35, [ENBROKER].[BIC_CODE_LEVEURO] o36, [ENBROKER].[LEIREPORTINGCODE] o37, [ENBROKER].[BROKERCODE] o38, [ENBROKER].[MASTERAGREEMENT] o39, [ENBROKER].[MASTERAGREEMENTVERSION_DATE] o40, [ENBROKER].[LEIEXPIRYDATE] o41, [ENBROKER].[COUNTRY] o42, [ENBROKER].[SBJREPORTING] o43, [ENBROKER].[NDG] o44"
@@ -1981,7 +1993,7 @@ def Calculations(WeightTarget, WeightActual, FundCurrency, StockCurrency, ShowQu
         cursor = conn.cursor()
         CounterValueFundCurrency, CounterValueLocalCurrency, BrokerCommisionsBPS, BrokerBps, \
         BrokerCentPerShare, BrokerCommisionsCENT, PotentialError = 0, 0, 0, 0, 0, 0, None
-        QuantityRounded = 0
+        QuantityRounded,Fx_FundCrncyVSfundCrncy = 0,0
         BrokeriD = 0 if BrokeriD is None else BrokeriD
         WeightTarget = Decimal(WeightTarget / 100)
         WeightActual = Decimal(WeightActual)
@@ -1989,6 +2001,7 @@ def Calculations(WeightTarget, WeightActual, FundCurrency, StockCurrency, ShowQu
             Fx_FundCrncyVSfundCrncy = 1
             FX = 1
         else:
+            FX = 0
             query = (
                     "SELECT [ENCURRENCY].[ID] o0, [ENCURRENCY].[DATE] o1, [ENCURRENCY].[TIME] o2, [ENCURRENCY].[TICKER] o3,"
                     " [ENCURRENCY].[NAME] o4, [ENCURRENCY].[PX_LAST] o5, [ENCURRENCY].[MARKET_SECOTR_DES] o6, "
@@ -2264,7 +2277,8 @@ def Order_Changes(OrderID, UserID, TimeCreation, TickerISIN, LimitPriceChanges, 
 
 def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuantityPreciseIndicated, fund_id, side,
               userId, cashOrSwap, securityType, weight_Target, instructions, settleDate, suggestedBroker, limit,
-              userName, urgency, expiry, userComment, fund, FundNumber, FundCurrency, ShowQuantityBox):
+              userName, urgency, expiry, userComment, fund, FundNumber, FundCurrency, ShowQuantityBox, isRepoLevEuro,
+              StretegyID, repoExpiryDate):
     """
 
     This Process get called after api get triggered and return id once the order get inserted.
@@ -2298,15 +2312,15 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
     print("Fund_Send")
     conn = database_dev()
     cursor = conn.cursor()
-    isRepoLevEuro, Pair = False, False,
-    bol_wrongTicker = False
-    BolUndefinedMethodDeriv = False
+    Pair = False
+    IsRepo = isRepoLevEuro
+    RepoExpiryDate = repoExpiryDate if repoExpiryDate else '1900-01-01'
+    StretegyID = StretegyID
+    bol_wrongTicker,BolUndefinedMethodDeriv,Loading,processid= False,False,False,None
     Comment = userComment
-    Loading = False
     Multiplier = MultiplierQuantity
     ProductType_2ndCol, InstrumentType_1stCol = "", ""
     ForcingTtype = False  # Not sure about this variable
-    processid = None
     gcashORswap = cashOrSwap
     IDcontactSuggestedBroker, PortfolioBrokerCode, NAV = suggestedBroker, None, 0  # need to find reference
     CurDate = get_current_date()
@@ -2314,8 +2328,9 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
     gUrgency = urgency
     Limit = limit
     WeightTarget = int(weight_Target)
-    WeightActual = 0
+    WeightActual,BrokerID = 0,0
     LineID = fund_id
+    # settleDate = settleDate if settleDate else '1900-01-01'
 
     user_given_quantity = TradeQuantityPreciseIndicated
     OptionExposureBox, ExposureCalculationMethod, BBGhttpError = False, None, False  # Those method have doubt
@@ -2720,6 +2735,20 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                         FundName = "Raffaello"
                         Fund = "Raffaello"
                         FundNameShort = "Raffaello"
+                    elif FundNumber == 7:
+                        database_name = 'OSUSR_SKP_Imola'
+                        To = ToBanorCapital
+                        col_name = 'IMOLAID'
+                        FundName = "Imola"
+                        Fund = "Imola"
+                        FundNameShort = "Imola"
+                    elif FundNumber == 9:
+                        database_name = 'OSUSR_SKP_Montecuccoli '
+                        To = ToBanorCapital
+                        col_name = 'MONTECUCCOLIID'
+                        FundName = "Montecuccoli"
+                        Fund = "Montecuccoli"
+                        FundNameShort = "Montecuccoli"
 
                     # perform operation for region
                     qepCurrdate = get_current_date()
@@ -2866,49 +2895,96 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
 
                         # checking for record present or not
                         cursor.execute(
-                            "SELECT  * FROM [outsys_prod].DBO." + database_name + "  WHERE ([TICKER_ISIN] = '" + str(
+                            "SELECT  id FROM [outsys_prod].DBO." + database_name + "  WHERE ([TICKER_ISIN] = '" + str(
                                 TickerISIN) + "' And [DATE]= '" + str(qepCurrdate) + "' ) ORDER BY [NAME] ASC ")
 
                         ChkRecords = cursor.fetchall()
-                        if ChkRecords:
-                            LineID = ChkRecords[0][0]
-                            Update_query = (
-                                    "UPDATE [outsys_prod].DBO." + database_name + " SET  [DATE] = '" + str(
-                                qepCurrdate) + "', [INSTRTYPE] = '" + str(
-                                InstrumentType_1stCol) + "', [TICKER_ISIN] = '" + str(
-                                TickerISIN) + "',	[NAME] = '" + str(
-                                sStockName) + "',	[WEIGHT_ACTUAL] = '" + str(
-                                WeightActual) + "',	[WEIGHT_TARGET]='" + str(
-                                WeightTarget_para) + "',	[PAIRTRADE]= '" + str(
-                                xPairTrade) + "', [SECURITYTYPE]='" + str(
-                                ProductType_2ndCol) + "', [Quantity]=" + str(
-                                TradeQuantityPreciseIndicated) + ",[DB_LASTPRICE]='" + str(
-                                lastPrice) + "',[Currency]='" + str(bbgCrncy) + "'	 WHERE [ID] = '" + str(
-                                LineID) + "'")
-                            cursor.execute(Update_query)
-                            conn.commit()
-                            logger_sqlalchemy = logg_Handler(fund,
-                                                             logger_name="Update_query for different funds")
-                            logger_sqlalchemy.info("Database" + database_name + " entry updated")
 
+                        #######################  If is repo true and fund is LevEuro ############################
+
+                        if IsRepo or FundNumber == 14:
+                            if ChkRecords:
+                                LineID = ChkRecords[0][0]
+                                Update_query = (
+                                        "UPDATE [outsys_prod].DBO." + database_name + " SET  [DATE] = '" + str(
+                                    qepCurrdate) + "', [INSTRTYPE] = '" + str(
+                                    InstrumentType_1stCol) + "', [TICKER_ISIN] = '" + str(
+                                    TickerISIN) + "',	[NAME] = '" + str(
+                                    sStockName) + "',	[WEIGHT_ACTUAL] = '" + str(
+                                    WeightActual) + "',	[WEIGHT_TARGET]='" + str(
+                                    WeightTarget_para) + "',	[PAIRTRADE]= '" + str(
+                                    xPairTrade) + "', [SECURITYTYPE]='" + str(
+                                    ProductType_2ndCol) + "', [Quantity]=" + str(
+                                    TradeQuantityPreciseIndicated) + ",[DB_LASTPRICE]='" + str(
+                                    lastPrice) + "',[Currency]='" + str(bbgCrncy) + "',[IsRepo]='" + str(
+                                    IsRepo) + "',[StrategyID] = '" + str(StretegyID) + "',[RepoExpiryDate] = '" + str(
+                                    RepoExpiryDate) + "'	 WHERE [ID] = '" + str(
+                                    LineID) + "'")
+                                cursor.execute(Update_query)
+                                conn.commit()
+                                logger_sqlalchemy = logg_Handler(fund,
+                                                                 logger_name="Update_query for different funds")
+                                logger_sqlalchemy.info("Database" + database_name + " entry updated")
+
+                            else:
+                                Insert_query = (
+                                        "INSERT INTO [outsys_prod].DBO." + database_name + " ([DATE],[INSTRTYPE],[TICKER_ISIN],[NAME],[WEIGHT_ACTUAL],[WEIGHT_TARGET],[PAIRTRADE],[SECURITYTYPE],[Quantity],[ORDERSTAGE],[DB_LASTPRICE],[Currency],[IsRepo],[StrategyID],[RepoExpiryDate]) VALUES "
+                                                                                              "('" + str(
+                                    qepCurrdate) + "','" + str(InstrumentType_1stCol) + "',"
+                                                                                        "'" + str(
+                                    TickerISIN) + "','" + str(sStockName) + "','" + str(WeightActual) + "','" + str(
+                                    WeightTarget_para) + "','" + str(xPairTrade) + "','" + str(
+                                    ProductType_2ndCol) + "','" + str(TradeQuantityPreciseIndicated) + "','" + str(
+                                    OrderStage) + "','" + str(lastPrice) + "','" + str(bbgCrncy) + "','" + str(
+                                    IsRepo) + "','" + str(StretegyID) + "','" + str(RepoExpiryDate) + "') ")
+                                print(Insert_query)
+                                cursor.execute(Insert_query)
+                                conn.commit()
+                                new_id = cursor.lastrowid
+                                logger_sqlalchemy = logg_Handler(fund, logger_name="Insert query for different funds")
+                                logger_sqlalchemy.info(
+                                    "Database" + str(database_name) + " new entry added with " + str(
+                                        new_id) + " as id.")
                         else:
-                            Insert_query = (
-                                    "INSERT INTO [outsys_prod].DBO." + database_name + " ([DATE],[INSTRTYPE],[TICKER_ISIN],[NAME],[WEIGHT_ACTUAL],[WEIGHT_TARGET],[PAIRTRADE],[SECURITYTYPE],[Quantity],[ORDERSTAGE],[DB_LASTPRICE],[Currency]) VALUES "
-                                                                                          "('" + str(
-                                qepCurrdate) + "','" + str(InstrumentType_1stCol) + "',"
-                                                                                    "'" + str(
-                                TickerISIN) + "','" + str(sStockName) + "','" + str(WeightActual) + "','" + str(
-                                WeightTarget_para) + "','" + str(xPairTrade) + "','" + str(
-                                ProductType_2ndCol) + "','" + str(TradeQuantityPreciseIndicated) + "','" + str(
-                                OrderStage) + "','" + str(lastPrice) + "','" + str(bbgCrncy) + "') ")
-                            print(Insert_query)
-                            cursor.execute(Insert_query)
-                            conn.commit()
-                            new_id = cursor.lastrowid
-                            logger_sqlalchemy = logg_Handler(fund, logger_name="Insert query for different funds")
-                            logger_sqlalchemy.info(
-                                "Database" + str(database_name) + " new entry added with " + str(
-                                    new_id) + " as id.")
+                            if ChkRecords:
+                                LineID = ChkRecords[0][0]
+                                Update_query = (
+                                        "UPDATE [outsys_prod].DBO." + database_name + " SET  [DATE] = '" + str(
+                                    qepCurrdate) + "', [INSTRTYPE] = '" + str(
+                                    InstrumentType_1stCol) + "', [TICKER_ISIN] = '" + str(
+                                    TickerISIN) + "',	[NAME] = '" + str(
+                                    sStockName) + "',	[WEIGHT_ACTUAL] = '" + str(
+                                    WeightActual) + "',	[WEIGHT_TARGET]='" + str(
+                                    WeightTarget_para) + "',	[PAIRTRADE]= '" + str(
+                                    xPairTrade) + "', [SECURITYTYPE]='" + str(
+                                    ProductType_2ndCol) + "', [Quantity]=" + str(
+                                    TradeQuantityPreciseIndicated) + ",[DB_LASTPRICE]='" + str(
+                                    lastPrice) + "',[Currency]='" + str(bbgCrncy) + "' WHERE [ID] = '" + str(
+                                    LineID) + "'")
+                                cursor.execute(Update_query)
+                                conn.commit()
+                                logger_sqlalchemy = logg_Handler(fund,
+                                                                 logger_name="Update_query for different funds")
+                                logger_sqlalchemy.info("Database" + database_name + " entry updated")
+
+                            else:
+                                Insert_query = (
+                                        "INSERT INTO [outsys_prod].DBO." + database_name + " ([DATE],[INSTRTYPE],[TICKER_ISIN],[NAME],[WEIGHT_ACTUAL],[WEIGHT_TARGET],[PAIRTRADE],[SECURITYTYPE],[Quantity],[ORDERSTAGE],[DB_LASTPRICE],[Currency]) VALUES "
+                                                                                              "('" + str(
+                                    qepCurrdate) + "','" + str(InstrumentType_1stCol) + "',"
+                                                                                        "'" + str(
+                                    TickerISIN) + "','" + str(sStockName) + "','" + str(WeightActual) + "','" + str(
+                                    WeightTarget_para) + "','" + str(xPairTrade) + "','" + str(
+                                    ProductType_2ndCol) + "','" + str(TradeQuantityPreciseIndicated) + "','" + str(
+                                    OrderStage) + "','" + str(lastPrice) + "','" + str(bbgCrncy) + "') ")
+                                print(Insert_query)
+                                cursor.execute(Insert_query)
+                                conn.commit()
+                                new_id = cursor.lastrowid
+                                logger_sqlalchemy = logg_Handler(fund, logger_name="Insert query for different funds")
+                                logger_sqlalchemy.info(
+                                    "Database" + str(database_name) + " new entry added with " + str(
+                                        new_id) + " as id.")
                             # new_id = 428800
 
                         if LineID is None or LineID == "NULL" or LineID == '':
@@ -3014,18 +3090,3 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                 else:
                     return Http_Server_wst01_repose
 
-# Fund_Send(sStockName="APPLE INC",
-#          bol_wrongTicker=False,
-#          TickerISIN="AAPL US Equity",
-#          BolUndefinedMethodDeriv=False,
-#          Loading=False,
-#          TradeQuantityPreciseIndicated=5, MultiplierQuantity=2,
-#          NALineID=None, Pair=False, CHLineID=None, FundNumber=1,
-#          ITLineID=None, EVLineID=None, NAV=None, EBLineID=None, ACLineID=None, NFLineID=None, ROLineID=None,
-#          ASALLineID=None, HFLineID=None, MEALineID=None,
-#          LEVeuroLineID=None, ASSLineID=None, isRepoLevEuro=False, RaffaID=None)
-
-# Col_1_and_2_Using_Ticker_2(Ticker = 1 , Col_1_Ready = None)
-
-# Col_1_and_2_Using_Weight_3(Ticker='PROLSSU LX EQUITY', Weight=0, CashORswap='SWAP',
-#                            StockName='BANOR-NORTH AMER L/S EQ-SUSD', BbgSecurityTyp=None)
