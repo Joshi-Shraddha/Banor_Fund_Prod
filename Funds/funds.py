@@ -9,7 +9,7 @@ from DatafromBBG import findbyBBGws01
 from configuration import database_dev, get_current_date, get_current_time
 from datetime import datetime
 from bbgdatafromdb import get_bbg_records
-from email_send_service import sendemail, Email_Send_ErrorAlarm, Email_Send_Advisory
+from email_send_service import sendemail
 import logging
 from flask import jsonify
 
@@ -774,7 +774,7 @@ def Trading_Equity_Fund_ETF_Cash(FundNumber, Ticker, IDcontactSuggestedBroker, C
             "[ENBROKER].[C4F_FUNDSBROKERCODE] o4, [ENBROKER].[SHORTCODE] o5, "
             "[ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, [ENBROKER].[ADDRESS] o8, [ENBROKER].[INFO] o9"
             " FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] WHERE "
-            "([ENBROKER].[RELATIONTIPE] = N'Broker') AND ( [ENBROKER].[ID] = " + IDcontactForBroker + " ORDER BY [ENBROKER].[NAME] ASC")
+            "([ENBROKER].[RELATIONTIPE] = N'Broker') AND ( [ENBROKER].[ID] = " + IDcontactForBroker + ") ORDER BY [ENBROKER].[NAME] ASC")
     cursor.execute(GetContactById_query)
     GetContactById = cursor.fetchall()
     for j, _ in enumerate(GetContactById):
@@ -976,40 +976,38 @@ def Trading_Swap(FundNumber, IDcontactSuggestedBroker, PortfolioBrokerCode):
             for i, _ in enumerate(ByBROKER_CODE):
                 IDcontactForBroker = ByBROKER_CODE[i][0]
 
-        if IDcontactSuggestedBroker is None and SearchByName == "" and IDcontactForBroker is None:
-            pass
-        else:
-            GetFundById_query = (
-                    "SELECT [ENFUNDS].[ID] o0, [ENFUNDS].[SIMPLENAME] o1, [ENFUNDS].[NAME] o2, [ENFUNDS].[TICKER] o3,"
-                    " [ENFUNDS].[CRNCY] o4, [ENFUNDS].[CLASS] o5,[ENFUNDS].[BASECURRENCY] o31, [ENFUNDS].[CASA4FUND_FUNDNAME] o32"
-                    "[ENFUNDS].[JPMORGANACCOUNT] o33, [ENFUNDS].[UBSACCOUNT] o34 FROM [outsys_prod].DBO.[OSUSR_38P_FUNDS] [ENFUNDS] "
-                    "WHERE ([ENFUNDS].[FUND_CODE] = " + str(FundNumber) + ") ORDER BY [ENFUNDS].[NAME] ASC")
-            cursor.execute(GetFundById_query)
-            GetFundById = cursor.fetchall()
-            for j, _ in enumerate(GetFundById):
-                JP_MorganAccount = GetFundById[j][33]
+    if IDcontactSuggestedBroker is None and SearchByName == "" and IDcontactForBroker is None:
+        pass
+    else:
+        GetFundById_query = ("SELECT [ENFUNDS].[ID] o0, [ENFUNDS].[SIMPLENAME] o1, [ENFUNDS].[NAME] o2, [ENFUNDS].[TICKER] o3, [ENFUNDS].[CRNCY] o4, [ENFUNDS].[CLASS] o5, [ENFUNDS].[FUND_CODE] o6, [ENFUNDS].[ID_ISIN] o7, [ENFUNDS].[FRONT_LOAD_FEE] o8, [ENFUNDS].[BACK_LOAD_FEE] o9, [ENFUNDS].[MNG_FEE] o10, [ENFUNDS].[PERF_FEE] o11, [ENFUNDS].[MNG_FEETILLJUNE14] o12, [ENFUNDS].[PERC_FEETILLJUNE14] o13, [ENFUNDS].[COLLOCAMENTOUBS] o14, [ENFUNDS].[COLLOCAMENTOBANORSIM] o15, [ENFUNDS].[MINFIRSTTIME_INVESTMENT] o16, [ENFUNDS].[STRATEGY] o17, [ENFUNDS].[GEOFOCUSREGION] o18, [ENFUNDS].[ASSETCLASS] o19, [ENFUNDS].[INCEPTIONDATE] o20, [ENFUNDS].[SICAV] o21, [ENFUNDS].[BENCHMARK] o22, [ENFUNDS].[DETAILSCUSTOMBENCHMARKS] o23, [ENFUNDS].[SETTLEMENT] o24, [ENFUNDS].[MORNINGSTARCATEGORY] o25, [ENFUNDS].[CUTOFF] o26, [ENFUNDS].[DEALINGPERIOD] o27, [ENFUNDS].[ADVISOR] o28, [ENFUNDS].[FX_BDL_ACCOUNT] o29, [ENFUNDS].[FX_BNP_ACCOUNT] o30, [ENFUNDS].[BASECURRENCY] o31, [ENFUNDS].[CASA4FUND_FUNDNAME] o32, [ENFUNDS].[JPMORGANACCOUNT] o33, [ENFUNDS].[UBSACCOUNT] o34 "
+                             "FROM [outsys_prod].DBO.[OSUSR_38P_FUNDS] [ENFUNDS] WHERE ([ENFUNDS].[FUND_CODE] = '"+str(
+            FundNumber)+"') ORDER BY [ENFUNDS].[NAME] ASC ")
+        cursor.execute(GetFundById_query)
+        GetFundById = cursor.fetchall()
+        for j, _ in enumerate(GetFundById):
+            JP_MorganAccount = GetFundById[j][33]
 
-            GetContactById_query = (
-                    "SELECT [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1, [ENBROKER].[MACROFUNCTION] o2, "
-                    "[ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4, [ENBROKER].[SHORTCODE] o5,"
-                    " [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, [ENBROKER].[ADDRESS] o8, "
-                    "[ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10 FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
-                    "WHERE ([ENBROKER].[RELATIONTIPE] = N'Broker') AND ([ENBROKER].[ID] = " + str(
-                IDcontactForBroker) + ") ORDER BY [ENBROKER].[NAME] ASC ")
-            cursor.execute(GetContactById_query)
-            GetContactById = cursor.fetchall()
-            for k, _ in enumerate(GetContactById):
-                BrokerName = GetContactById[k][3]
-                BrokerShortCode = GetContactById[k][5]
-                C4FBroker = GetContactById[k][4]
-                BrokerID = GetContactById[k][0]
-            BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost = Order_Type_A_B(IDcontactSuggestedBroker)
-            BrokerType_A_B = BrokerType_A_B
-            NeedComment = NeedComment
-            BrokerSelReason = BrokerSelReason
-            ExecutorFactor_Cost = ExecutorFactor_Cost
-            return BrokerName, BrokerShortCode, Custodian, Account, C4FBroker, BrokerID, BrokerType_A_B, \
-                   NeedComment, BrokerSelReason, ExecutorFactor_Cost, JP_MorganAccount
+        GetContactById_query = (
+                "SELECT [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1, [ENBROKER].[MACROFUNCTION] o2, "
+                "[ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4, [ENBROKER].[SHORTCODE] o5,"
+                " [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, [ENBROKER].[ADDRESS] o8, "
+                "[ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10 FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
+                "WHERE ([ENBROKER].[RELATIONTIPE] = N'Broker') AND ([ENBROKER].[ID] = " + str(
+            IDcontactForBroker) + ") ORDER BY [ENBROKER].[NAME] ASC ")
+        cursor.execute(GetContactById_query)
+        GetContactById = cursor.fetchall()
+        for k, _ in enumerate(GetContactById):
+            BrokerName = GetContactById[k][3]
+            BrokerShortCode = GetContactById[k][5]
+            C4FBroker = GetContactById[k][4]
+            BrokerID = GetContactById[k][0]
+        BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost = Order_Type_A_B(IDcontactSuggestedBroker)
+        BrokerType_A_B = BrokerType_A_B
+        NeedComment = NeedComment
+        BrokerSelReason = BrokerSelReason
+        ExecutorFactor_Cost = ExecutorFactor_Cost
+    return BrokerName, BrokerShortCode, Custodian, Account, C4FBroker, BrokerID, BrokerType_A_B, \
+           NeedComment, BrokerSelReason, ExecutorFactor_Cost, JP_MorganAccount
 
 
 def Trading_Derivative_Cash(FundNumber, PortfolioBrokerCode):
@@ -1165,8 +1163,8 @@ def Swap_Exposure(FundCode):
         if FundCode == 4 or FundCode == 5 or FundCode == 7 or FundCode == 8 or FundCode == 11 or FundCode == 12:
             return None
         else:
-            Nav = (" SELECT  [OUTSYS_PROD].DBO.[OSUSR_38P_GREATERCHINALS].[QUANTITY] AS Q"
-                   " FROM  [OUTSYS_PROD].DBO.[OSUSR_38P_GREATERCHINALS]"
+            Nav = (" SELECT  [outsys_prod].DBO.[OSUSR_38P_GREATERCHINALS].[QUANTITY] AS Q"
+                   " FROM  [outsys_prod].DBO.[OSUSR_38P_GREATERCHINALS]"
                    " WHERE [INSTRTYPE] = 'NAV' AND [DATE] = '" + str(CurDate) + "' ")
 
             cursor.execute(Nav)
@@ -1179,9 +1177,9 @@ def Swap_Exposure(FundCode):
             # GREATER CHINA
             GreaterChina = (" SELECT [BROKERCODE], "
                             " SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot "
-                            " FROM  [OUTSYS_PROD].DBO.[OSUSR_38P_GREATERCHINALS] "
-                            " WHERE  [OUTSYS_PROD].DBO.[OSUSR_38P_GREATERCHINALS].[DATE] = '" + str(
-                CurDate) + "'  and  [OUTSYS_PROD].DBO.[OSUSR_38P_GREATERCHINALS].[INSTRTYPE] = 'SW' "
+                            " FROM  [outsys_prod].DBO.[OSUSR_38P_GREATERCHINALS] "
+                            " WHERE  [outsys_prod].DBO.[OSUSR_38P_GREATERCHINALS].[DATE] = '" + str(
+                CurDate) + "'  and  [outsys_prod].DBO.[OSUSR_38P_GREATERCHINALS].[INSTRTYPE] = 'SW' "
                            " GROUP BY [BROKERCODE] ")
             cursor.execute(GreaterChina)
             resultGreaterChina = cursor.fetchall()
@@ -1197,7 +1195,7 @@ def Swap_Exposure(FundCode):
 
                     GetBrokersByShortCode = (
                             "SELECT  [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1, [ENBROKER].[MACROFUNCTION] o2, [ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4, [ENBROKER].[SHORTCODE] o5, [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, [ENBROKER].[ADDRESS] o8, [ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10, [ENBROKER].[MAILINGLIST_SIT_BANORCAP] o11, [ENBROKER].[CREATEDON] o12, [ENBROKER].[UPDATEDON] o13, [ENBROKER].[FAX] o14, [ENBROKER].[CONSISTENCYISSUE] o15, [ENBROKER].[UPDATEDBY] o16, [ENBROKER].[LASTSYSTOSALSEFORCECON] o17, [ENBROKER].[IDWITHISSUES] o18, [ENBROKER].[SF_ID] o19, [ENBROKER].[DELETEDONSF] o20, [ENBROKER].[SF_LASTUPDATING] o21, [ENBROKER].[HEADQUARTER] o22, [ENBROKER].[COMPANYSIZE] o23, [ENBROKER].[WEBSITE] o24, [ENBROKER].[DO_CREATE] o25, [ENBROKER].[DO_UPDATE] o26, [ENBROKER].[KEYWORD] o27, [ENBROKER].[EMAIL] o28, [ENBROKER].[ACTIVEINCONSISTENCY] o29, [ENBROKER].[CREATEDBY] o30, [ENBROKER].[ISDA] o31, [ENBROKER].[SWAPEXPOSURE] o32, [ENBROKER].[SWAPPOOL] o33, [ENBROKER].[DELETEDFROMCRM] o34, [ENBROKER].[SUPPLIER] o35, [ENBROKER].[BIC_CODE_LEVEURO] o36, [ENBROKER].[LEIREPORTINGCODE] o37, [ENBROKER].[BROKERCODE] o38, [ENBROKER].[MASTERAGREEMENT] o39, [ENBROKER].[MASTERAGREEMENTVERSION_DATE] o40, [ENBROKER].[LEIEXPIRYDATE] o41, [ENBROKER].[COUNTRY] o42, [ENBROKER].[SBJREPORTING] o43, [ENBROKER].[NDG] o44 "
-                            "FROM [OUTSYS_PROD].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
+                            "FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
                             "WHERE ([ENBROKER].[SHORTCODE] = '" + str(BrokerShortCode) + "') "
                                                                                          "ORDER BY [ENBROKER].[NAME] ASC ")
 
@@ -1230,8 +1228,8 @@ def Swap_Exposure(FundCode):
             else:
                 pass
             # AMERICA
-            Nav2 = (" (SELECT  [OUTSYS_PROD].DBO.[OSUSR_38P_NORTHAMERICALS].[QUANTITY] AS Q"
-                    " FROM  [OUTSYS_PROD].DBO.[OSUSR_38P_NORTHAMERICALS]"
+            Nav2 = (" (SELECT  [outsys_prod].DBO.[OSUSR_38P_NORTHAMERICALS].[QUANTITY] AS Q"
+                    " FROM  [outsys_prod].DBO.[OSUSR_38P_NORTHAMERICALS]"
                     " WHERE [INSTRTYPE] = 'NAV' AND [DATE] = '" + str(CurDate) + "') ")
 
             cursor.execute(Nav2)
@@ -1244,9 +1242,9 @@ def Swap_Exposure(FundCode):
 
             America = (" SELECT [BROKERCODE], "
                        " SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot "
-                       " FROM  [OUTSYS_PROD].DBO.[OSUSR_38P_NORTHAMERICALS] "
-                       " WHERE  [OUTSYS_PROD].DBO.[OSUSR_38P_NORTHAMERICALS].[DATE] = '" + str(
-                CurDate) + "' and  [OUTSYS_PROD].DBO.[OSUSR_38P_NORTHAMERICALS].[INSTRTYPE] = 'SW' "
+                       " FROM  [outsys_prod].DBO.[OSUSR_38P_NORTHAMERICALS] "
+                       " WHERE  [outsys_prod].DBO.[OSUSR_38P_NORTHAMERICALS].[DATE] = '" + str(
+                CurDate) + "' and  [outsys_prod].DBO.[OSUSR_38P_NORTHAMERICALS].[INSTRTYPE] = 'SW' "
                            " GROUP BY [BROKERCODE] ")
             cursor.execute(America)
             resultAmerica = cursor.fetchall()
@@ -1258,7 +1256,7 @@ def Swap_Exposure(FundCode):
                     FundID2 = 2
                     GetBrokersByShortCode2 = (
                             "SELECT  [ENBROKER].[ID] o0, [ENBROKER].[RELATIONTIPE] o1, [ENBROKER].[MACROFUNCTION] o2, [ENBROKER].[NAME] o3, [ENBROKER].[C4F_FUNDSBROKERCODE] o4, [ENBROKER].[SHORTCODE] o5, [ENBROKER].[ASSETCLASS] o6, [ENBROKER].[PHONE] o7, [ENBROKER].[ADDRESS] o8, [ENBROKER].[INFO] o9, [ENBROKER].[MAILINGLIST] o10, [ENBROKER].[MAILINGLIST_SIT_BANORCAP] o11, [ENBROKER].[CREATEDON] o12, [ENBROKER].[UPDATEDON] o13, [ENBROKER].[FAX] o14, [ENBROKER].[CONSISTENCYISSUE] o15, [ENBROKER].[UPDATEDBY] o16, [ENBROKER].[LASTSYSTOSALSEFORCECON] o17, [ENBROKER].[IDWITHISSUES] o18, [ENBROKER].[SF_ID] o19, [ENBROKER].[DELETEDONSF] o20, [ENBROKER].[SF_LASTUPDATING] o21, [ENBROKER].[HEADQUARTER] o22, [ENBROKER].[COMPANYSIZE] o23, [ENBROKER].[WEBSITE] o24, [ENBROKER].[DO_CREATE] o25, [ENBROKER].[DO_UPDATE] o26, [ENBROKER].[KEYWORD] o27, [ENBROKER].[EMAIL] o28, [ENBROKER].[ACTIVEINCONSISTENCY] o29, [ENBROKER].[CREATEDBY] o30, [ENBROKER].[ISDA] o31, [ENBROKER].[SWAPEXPOSURE] o32, [ENBROKER].[SWAPPOOL] o33, [ENBROKER].[DELETEDFROMCRM] o34, [ENBROKER].[SUPPLIER] o35, [ENBROKER].[BIC_CODE_LEVEURO] o36, [ENBROKER].[LEIREPORTINGCODE] o37, [ENBROKER].[BROKERCODE] o38, [ENBROKER].[MASTERAGREEMENT] o39, [ENBROKER].[MASTERAGREEMENTVERSION_DATE] o40, [ENBROKER].[LEIEXPIRYDATE] o41, [ENBROKER].[COUNTRY] o42, [ENBROKER].[SBJREPORTING] o43, [ENBROKER].[NDG] o44 "
-                            "FROM [OUTSYS_PROD].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
+                            "FROM [outsys_prod].DBO.[OSUSR_38P_BROKER] [ENBROKER] "
                             "WHERE ([ENBROKER].[SHORTCODE] = '" + str(BrokerShortCode2) + "') "
                                                                                           "ORDER BY [ENBROKER].[NAME] ASC ")
                     cursor.execute(GetBrokersByShortCode2)
@@ -1288,8 +1286,8 @@ def Swap_Exposure(FundCode):
             else:
                 pass
             # Italy
-            Nav3 = (" (SELECT  [OUTSYS_PROD].DBO.[OSUSR_38P_ITALYLS].[QUANTITY] AS Q"
-                    " FROM  [OUTSYS_PROD].DBO.[OSUSR_38P_ITALYLS]"
+            Nav3 = (" (SELECT  [outsys_prod].DBO.[OSUSR_38P_ITALYLS].[QUANTITY] AS Q"
+                    " FROM  [outsys_prod].DBO.[OSUSR_38P_ITALYLS]"
                     " WHERE [INSTRTYPE] = 'NAV' AND [DATE] = '" + str(CurDate) + "') ")
 
             cursor.execute(Nav3)
@@ -1298,11 +1296,9 @@ def Swap_Exposure(FundCode):
                 rNav3 = 0
             else:
                 rNav3 = resultNav3[0][0]
-            Italy = (" SELECT [BROKERCODE], SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot "
-                     " FROM  [OUTSYS_PROD].DBO.[OSUSR_38P_ITALYLS].[QUANTITY] "
-                     " WHERE  [OUTSYS_PROD].DBO.[OSUSR_38P_ITALYLS].[QUANTITY].[DATE] = '" + str(
-                CurDate) + "' and  [OUTSYS_PROD].DBO.[OSUSR_38P_ITALYLS].[QUANTITY].[INSTRTYPE] = 'NAV' "
-                           " GROUP BY [BROKERCODE] ")
+            Italy = ("SELECT [BROKERCODE], SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot  FROM  "
+                     "[outsys_prod].DBO.[OSUSR_38P_ITALYLS] WHERE  [outsys_prod].DBO.[OSUSR_38P_ITALYLS].[DATE] ="
+                     "  '" + str(CurDate) + "' and  [outsys_prod].DBO.[OSUSR_38P_ITALYLS].[INSTRTYPE] = 'SW' GROUP BY [BROKERCODE] ")
             cursor.execute(Italy)
             resultItaly = cursor.fetchall()
             if resultItaly != []:
@@ -1351,11 +1347,10 @@ def Swap_Exposure(FundCode):
                 rNav4 = 0
             else:
                 rNav4 = resultNav4[0][0]
-            Frontiers = (" SELECT [BROKERCODE], "
-                         " SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot "
-                         " FROM  [outsys_prod].DBO.[OSUSR_BOL_NEWFRONTIERS].[QUANTITY] "
-                         " WHERE  [outsys_prod].DBO.[OSUSR_BOL_NEWFRONTIERS].[QUANTITY].[DATE] = '2021-10-25' and  [outsys_prod].DBO.[OSUSR_BOL_NEWFRONTIERS].[QUANTITY].[INSTRTYPE] = 'NAV' "
-                         " GROUP BY [BROKERCODE] ")
+            Frontiers = ("SELECT [BROKERCODE], SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot FROM  "
+                         "[outsys_prod].DBO.[OSUSR_BOL_NEWFRONTIERS] WHERE  "
+                         "[outsys_prod].DBO.[OSUSR_BOL_NEWFRONTIERS].[DATE] = '" + str(CurDate) + "' and  "
+                         "[outsys_prod].DBO.[OSUSR_BOL_NEWFRONTIERS].[INSTRTYPE] = 'SW' GROUP BY [BROKERCODE]")
             cursor.execute(Frontiers)
             resultFrontiers = cursor.fetchall()
             if resultFrontiers != []:
@@ -1401,12 +1396,10 @@ def Swap_Exposure(FundCode):
                 rNav5 = 0
             else:
                 rNav5 = resultNav5[0][0]
-            Rosemary = (" SELECT [BROKERCODE], "
-                        " SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot "
-                        " FROM  [outsys_prod].DBO.[OSUSR_BOL_ROSEMARY].[QUANTITY] "
-                        " WHERE  [outsys_prod].DBO.[OSUSR_BOL_ROSEMARY].[QUANTITY].[DATE] = '" + str(
-                CurDate) + "' and  [outsys_prod].DBO.[OSUSR_BOL_ROSEMARY].[QUANTITY].[INSTRTYPE] = 'NAV' "
-                           " GROUP BY [BROKERCODE] ")
+            Rosemary = ("SELECT [BROKERCODE], SUM (ABS([WEIGHT_ACTUAL])) AS WeightTot  "
+                        "FROM  [outsys_prod].DBO.[OSUSR_BOL_ROSEMARY]  WHERE  "
+                        "[outsys_prod].DBO.[OSUSR_BOL_ROSEMARY].[DATE] = '" + str(CurDate) + "' and  "
+                        "[outsys_prod].DBO.[OSUSR_BOL_ROSEMARY].[INSTRTYPE] = 'SW' GROUP BY [BROKERCODE]  ")
             cursor.execute(Rosemary)
             resultRosemary = cursor.fetchall()
             if resultRosemary != []:
@@ -1504,7 +1497,7 @@ def Broker_Selection(FundCode, InstrType, SecurityType, Ticker, BrokerID_fromPor
     cursor = conn.cursor()
     out_BrokerShortCode, out_BrokerID, out_BrokerName, out_C4F_BrokerName, out_JP_MorganAccount, BrokerType_A_B, \
     NeedComment, BrokerSelReason, ExecutorFactor_Cost, ExposureTradeID, out_UBS_Account, out_LeiReportingCode, \
-    out_BrokerCodeLevEuro, out_masterAgreement, out_masterAgreementVersionDate = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+    out_BrokerCodeLevEuro, out_masterAgreement, out_masterAgreementVersionDate = None, None, None, None, None, None, None, None, None, None, None, None, None, None, ''
     IDcontactSuggestedBroker = BrokerSuggestedByUser
     Bol_BrokerAssigned = False
     BrokerId = None
@@ -2185,8 +2178,9 @@ def Calculations(WeightTarget, WeightActual, FundCurrency, StockCurrency, ShowQu
         cursor.execute(query1)
         resultGet1 = cursor.fetchall()
         for j, _ in enumerate(resultGet1):
-            BrokerBps = resultGet1[j][58]
-            BrokerCentPerShare = resultGet1[j][60]
+            RG = resultGet1[j]
+            BrokerBps = RG[20]
+            BrokerCentPerShare = RG[22]
             QuantityRounded = Quantity
         if MEA_Multiplier != 1 or MEA_Multiplier != 0:
             Quantity = Quantity * MEA_Multiplier
@@ -2330,6 +2324,7 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
     WeightTarget = int(weight_Target)
     WeightActual,BrokerID = 0,0
     LineID = fund_id
+    settleDate = settleDate if settleDate else '1900-01-01'
     # settleDate = settleDate if settleDate else '1900-01-01'
 
     user_given_quantity = TradeQuantityPreciseIndicated
@@ -2491,34 +2486,43 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                             bbg_Opt_Strike_Px) + "', [MATURITY_DATE_ESTIMATED] = '" + str(
                             bbg_MaturityDate) + "', [NEXT_CALL_DT] = '" + str(
                             bbg_Next_Call_Dt) + "' Where ([TICKERREQUESTED] = '" + str(TickerISIN) + "')")
-                        cursor.execute(updateContrTick)
-                        conn.commit()
+                        print(updateContrTick)
+                        # cursor.execute(updateContrTick)
+                        # conn.commit()
                     else:
                         iGetControlTickerISINsByTickerRequested = (
-                                "INSERT INTO [outsys_prod].DBO.[OSUSR_BOL_CONTROLTICKER_ISIN]( [BOLEANAPIREQUESTSENT],  [BOLEANAPIREQUESTSENTAGAIN],  [APIDATETIMEREQUEST],  [TICKERREQUESTED],  [DATETIME],  [ERROR],  [SECURITYNAME],  [NAME],  [SHORT_NAME],  [CRNCY],  [COUNTRY],  [ID_ISIN],  [MARKET_SECTOR_DES],  [SECURITY_TYP],  [TICKER_AND_EXCH_CODE],  [COUNTRY_ISO],  [COUNTRY_FULL_NAME],  [ISSUER_INDUSTRY],  [PARENT_TICKER_EXCHANGE],  [CHG_PCT_YTD],  [PX_LAST],  [TICKERISINUPPERCASE],  [EQY_PRIM_EXCH_SHRT],  [SETTLE_DATE],  [OPT_CONT_SIZE],  [FUT_CONT_SIZE],  [ID_BB_ULTIMATE_PARENT_CO],  [MATURITYDATE],  [STARTTIME],  [ENDTIME],  [UNDERLAYPRCIE],  [LOT_SIZE],  [ID_BB_ULTIMATE_PARENT_CO_NAM],  [CURRENCY1],  [CURRENCY2],  [HIST_PX_ENDMONTH],  [HIST_ERROR],  [HIST_DATE],  [HIST_BOLAPIREQUESTSENT],  [HIST_BOLAPIREQUESTSENTAG],  [EQY_SH_OUT],  [AMT_OUTSTANDING],  [VOLUME_AVG_20D],  [CNTRY_OF_RISK],  [PAYMENT_RANK],  [CAPITAL_CONTINGENT_SECURITY],  [REGISTERED_COUNTRY_LOCATION],  [COUNTRY_OF_LARGEST_REVENUE],  [UNDERLYING_ISIN],  [OPT_STRIKE_PX],  [MATURITY_DATE_ESTIMATED],  [NEXT_CALL_DT],  [DELTA],  [OPT_PUT_CALL],  [ERRORTEXT],  [INDUSTRY_GROUP],  [INDUSTRY_SECTOR],  [VOLUME_AVG_30D],  [CUR_MKT_CAP],  [VOLATILITY_30D],  [EQY_BETA],  [EQY_ALPHA],  [COUPON], [ACCRUEDINTEREST]) values"
-                                "(0, 0, '" + str(CurDate) + "','" + str(TickerISIN) + "', getdate(),0,'" + str(
-                            bbg_SecurityName) + "','" + str(bbg_Name) + "','" + str(
-                            bbg_Short_Name) + "','" + str(
-                            bbgCrncy) + "','" + str(bbgCountry) + "','" + str(bbg_Id_Isin) + "','" + str(
-                            bbg_Market_Sector_Des) + "', '" + str(bbg_Security_Typ) + "','" + str(
-                            bbg_Ticker_And_Exch_Code) + "','" + str(bbg_Country_Iso) + "','" + str(
-                            bbg_Country_Full_Name) + "','" + str(bbg_Issuer_Industry) + "','" + str(
-                            bbg_Parent_Ticker_Exchange) + "','" + str(bbg_Chg_Pct_Ytd) + "','" + str(
-                            bbg_Px_Last) + "','" + str(bbg_TickerIsinUpperCase) + "','" + str(
-                            bbg_Exchange) + "','" + str(bbg_SettleDate) + "', '" + str(
-                            bbg_OptContSize) + "','" + str(
-                            bbg_FutContSize) + "', '" + str(bbg_IDUltimateParentCo) + "','" + str(
-                            bbg_MaturityDate) + "','" + str(bbg_MarketStartTime) + "','" + str(
-                            bbg_MarketEndTime) + "','" + str(bbg_UnderlyingPrice) + "','" + str(
-                            bbg_lotSize) + "', '" + str(
-                            bbg_IDUltimateParentCoName) + "', "", "", 0,  0, 0,  0, '" + str(
-                            bbg_Eqy_Sh_Out) + "', '" + str(bbg_Amt_Outstanding) + "','" + str(
-                            bbg_Volume_Avg_20D) + "', '" + str(bbg_Cntry_Of_Risk) + "', '" + str(
-                            bbg_Payment_Rank) + "', '" + str(bbg_Capital_Contingent_Security) + "','" + str(
-                            bbg_Registered_Country_Location) + "', '" + str(
-                            bbg_Country_Of_Largest_Revenue) + "', '" + str(bbg_Underlying_Isin) + "', '" + str(
-                            bbg_Opt_Strike_Px) + "','" + str(bbg_MaturityDate) + "', '" + str(
-                            bbg_Next_Call_Dt) + "'")
+                                "INSERT INTO [outsys_prod].DBO.[OSUSR_BOL_CONTROLTICKER_ISIN]([BOLEANAPIREQUESTSENT],"
+                                "[BOLEANAPIREQUESTSENTAGAIN],[APIDATETIMEREQUEST],[TICKERREQUESTED],[DATETIME],[ERROR],"
+                                "[SECURITYNAME],[NAME],[SHORT_NAME],[CRNCY],[COUNTRY],[ID_ISIN],[MARKET_SECTOR_DES],"
+                                "[SECURITY_TYP],[TICKER_AND_EXCH_CODE],[COUNTRY_ISO],[COUNTRY_FULL_NAME],[ISSUER_INDUSTRY]"
+                                ",[PARENT_TICKER_EXCHANGE],[CHG_PCT_YTD],[PX_LAST],[TICKERISINUPPERCASE],[EQY_PRIM_EXCH_SHRT],"
+                                "[SETTLE_DATE],[OPT_CONT_SIZE],[FUT_CONT_SIZE],[ID_BB_ULTIMATE_PARENT_CO],[MATURITYDATE]"
+                                ",[STARTTIME],[ENDTIME],[UNDERLAYPRCIE],[LOT_SIZE],[ID_BB_ULTIMATE_PARENT_CO_NAM],[HIST_PX_ENDMONTH],"
+                                "[HIST_ERROR],[HIST_BOLAPIREQUESTSENT],[HIST_BOLAPIREQUESTSENTAG],[EQY_SH_OUT],[AMT_OUTSTANDING],"
+                                "[VOLUME_AVG_20D],[CNTRY_OF_RISK],[PAYMENT_RANK],[CAPITAL_CONTINGENT_SECURITY],[REGISTERED_COUNTRY_LOCATION],"
+                                "[COUNTRY_OF_LARGEST_REVENUE],[UNDERLYING_ISIN],[OPT_STRIKE_PX],[MATURITY_DATE_ESTIMATED],[NEXT_CALL_DT])"
+                                "values(0,0,'" + str(CurDate) + "','" + str(TickerISIN) + "','" + str(
+                            current_date) + "',0,'" + str(bbg_SecurityName) + "','" + str(bbg_Name) + "','" + str(
+                            bbg_Short_Name) + "','" + str(bbgCrncy) + "','" + str(bbgCountry) + "','" + str(
+                            bbg_Id_Isin) + "','" + str(bbg_Market_Sector_Des) + "','" + str(
+                            bbg_Security_Typ) + "','" + str(bbg_Ticker_And_Exch_Code) + "','" + str(
+                            bbg_Country_Iso) + "','" + str(bbg_Country_Full_Name) + "','" + str(
+                            bbg_Issuer_Industry) + "','" + str(bbg_Parent_Ticker_Exchange) + "','" + str(
+                            bbg_Chg_Pct_Ytd) + "','" + str(bbg_Px_Last) + "','" + str(
+                            bbg_TickerIsinUpperCase) + "','" + str(bbg_Exchange) + "','" + str(
+                            bbg_SettleDate) + "','" + str(bbg_OptContSize) + "','" + str(bbg_FutContSize) + "','" + str(
+                            bbg_IDUltimateParentCo) + "','" + str(bbg_MaturityDate) + "','" + str(
+                            bbg_MarketStartTime) + "','" + str(bbg_MarketEndTime) + "','" + str(
+                            bbg_UnderlyingPrice) + "','" + str(bbg_lotSize) + "','" + str(
+                            bbg_IDUltimateParentCoName) + "',0,0,0,0,'" + str(bbg_Eqy_Sh_Out) + "','" + str(
+                            bbg_Amt_Outstanding) + "','" + str(bbg_Volume_Avg_20D) + "','" + str(
+                            bbg_Cntry_Of_Risk) + "','" + str(bbg_Payment_Rank) + "','" + str(
+                            bbg_Capital_Contingent_Security) + "','" + str(
+                            bbg_Registered_Country_Location) + "','" + str(
+                            bbg_Country_Of_Largest_Revenue) + "','" + str(bbg_Underlying_Isin) + "','" + str(
+                            bbg_Opt_Strike_Px) + "','" + str(bbg_MaturityDate) + "','" + str(bbg_Next_Call_Dt) + "') "
+                        )
+                        print(iGetControlTickerISINsByTickerRequested)
                         cursor.execute(iGetControlTickerISINsByTickerRequested)
                         conn.commit()
                         # BBG Refresh here
@@ -2590,7 +2594,7 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                 BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost, JP_MorganAccount \
                                     = Trading_Swap(FundNumber=FundNumber,
                                                    IDcontactSuggestedBroker=IDcontactSuggestedBroker,
-                                                   PortfolioBrokerCode=PortfolioBrokerCode)
+                                                   PortfolioBrokerCode=PortfolioBrokerCode if PortfolioBrokerCode else "")
                             else:
                                 if InstrumentType_1stCol == "C" and ProductType_2ndCol == "Option Equity" or \
                                         "InstrumentType_1stCol" == "C" and ProductType_2ndCol == "Option Index" or \
@@ -2603,6 +2607,8 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                         PortfolioBrokerCode=PortfolioBrokerCode)
                                 else:
                                     BrokerName = "Broker has not been identified"
+                                    Custodian = ""
+                                    Account = ""
 
                     # Ajax refresh here
 
@@ -2901,8 +2907,9 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                         ChkRecords = cursor.fetchall()
 
                         #######################  If is repo true and fund is LevEuro ############################
-
+                        # ProductType_2ndCol = securityType
                         if IsRepo or FundNumber == 14:
+                            StretegyID = str(StretegyID) if StretegyID else 'NULL'
                             if ChkRecords:
                                 LineID = ChkRecords[0][0]
                                 Update_query = (
@@ -2917,7 +2924,7 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                     ProductType_2ndCol) + "', [Quantity]=" + str(
                                     TradeQuantityPreciseIndicated) + ",[DB_LASTPRICE]='" + str(
                                     lastPrice) + "',[Currency]='" + str(bbgCrncy) + "',[IsRepo]='" + str(
-                                    IsRepo) + "',[StrategyID] = '" + str(StretegyID) + "',[RepoExpiryDate] = '" + str(
+                                    IsRepo) + "',[StrategyID] = " + StretegyID + ",[RepoExpiryDate] = '" + str(
                                     RepoExpiryDate) + "'	 WHERE [ID] = '" + str(
                                     LineID) + "'")
                                 cursor.execute(Update_query)
@@ -2936,7 +2943,7 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                     WeightTarget_para) + "','" + str(xPairTrade) + "','" + str(
                                     ProductType_2ndCol) + "','" + str(TradeQuantityPreciseIndicated) + "','" + str(
                                     OrderStage) + "','" + str(lastPrice) + "','" + str(bbgCrncy) + "','" + str(
-                                    IsRepo) + "','" + str(StretegyID) + "','" + str(RepoExpiryDate) + "') ")
+                                    IsRepo) + "'," + (StretegyID) + ",'" + str(RepoExpiryDate) + "') ")
                                 print(Insert_query)
                                 cursor.execute(Insert_query)
                                 conn.commit()
@@ -3036,14 +3043,24 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                         Username = userName
                         OrderQtyValue = TradeQuantityCalculatedRounded if TradeQuantityPreciseIndicated else TradeQuantityPreciseIndicated
                         out_BrokerID = str('NULL') if out_BrokerID is None else out_BrokerID
+
+                        # ProductType_2ndCol = securityType
                         # ------------------------------------------ Create order query add here --------------------------
+                        o_IsRepo = 1 if IsRepo else 0
+                        print("LineID fund id",LineID)
 
                         CreateOrders = (
                                 "INSERT INTO [outsys_prod].DBO.[OSUSR_38P_ORDERS]([CreationTime],[TickerISIN],[FundCode],[ActualWeight],"
                                 "[NewTargetWeight],[Side],[Approved],[ProductType],[FundName],[Broker],[TradingDeskConfirmation],[bnrProductType],"
                                 "[ProductID],[Limit],[OrderType],[bnrBroker],[Expiry],[Routing],[Fund],[Custodian],[OrderQtyType],[UserComment],[Account],"
                                 "[Date],[FundNameShort],[StockName],[IntrumentType],[BrokerID_contactTAB],[SettleDate],"
-                                "[TransactionType],""[" + col_name + "]"",[OrderStage],[BnrOrderPreciseQuantity],[Last_Price],[Currency],[FundCurrency],[Urgency],[Fx_FundCrncyVSfundCrncy],[PreciseInstructions],[ORDERQTYVALUE],[OPERATOR],[INSTRUCTIONS]) VALUES ('" + str(
+                                "[TransactionType],""[" + col_name + "]"",[OrderStage],[BnrOrderPreciseQuantity],"
+                                                                     "[Last_Price],[Currency],[FundCurrency],[Urgency],"
+                                                                     "[Fx_FundCrncyVSfundCrncy],[PreciseInstructions],"
+                                                                     "[ORDERQTYVALUE],[OPERATOR],[INSTRUCTIONS],"
+                                                                     "[isrepo],[BROKERSELMETHOD],[LevEuroSettleDate],"
+                                                                     "[LeiReportingCode],[REPO_CodeContrepartie],"
+                                                                     "[BrokerCode],[MasterAgreement],[MasterAgreementVersion_date]) VALUES ('" + str(
                             ctime) + "','" + str(TickerISIN) + "','" + str(FundCode) + "','" + str(
                             WeightActual) + "','" + str(NewTargetWeight) + "','" + str(
                             BuySellCoverShort) + "','Pending','" + str(ArborProductType) + "','" + str(
@@ -3051,15 +3068,18 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                             ProductType_2ndCol) + "','" + str(TickerISIN) + "','" + str(
                             Limit) + "','" + str(OrderType) + "','" + str(out_BrokerName) + "','" + str(
                             expiry) + "','Automated','" + str(Fund) + "','" + str(Custodian) + "','" + str(
-                            OrderQtyType) + "','" + str(Comment) + "','" + str(Account) + "','" + str(
+                            OrderQtyType) + "','" + str(Comment).replace("'","''") + "','" + str(Account) + "','" + str(
                             aCurrentDate) + "','" + str(FundNameShort) + "','" + str(Name) + "','" + str(
                             InstrumentType_1stCol) + "'," + str(out_BrokerID) + ",'" + str(
                             settleDate) + "','" + str(InstrumentType_1stCol) + "','" + str(
                             LineID) + "','Pending','" + str(TradeQuantityPreciseIndicated) + "','" + str(
                             bbg_Px_Last) + "','" + str(bbgCrncy) + "','" + str(FundCurrency) + "','" + str(
                             gUrgency) + "','" + str(calFx) + "','" + str(SuggestionPreciseInstruction) + "','" + str(
-                            user_given_quantity) + "','" + str(Username) + "','" + str(instructions) + "')")
-                        # print(CreateOrders)
+                            user_given_quantity) + "','" + str(Username) + "','" + str(instructions).replace("'","''") + "',"+str(
+                            o_IsRepo)+",'"+str(BrokerType_A_B)+"','"+str(settleDate)+"','"+str(
+                            out_LeiReportingCode)+"','"+str(out_BrokerCodeLevEuro)+"','"+str(
+                            out_BrokerCodeLevEuro)+"','"+str(out_masterAgreement)+"','"+str(out_masterAgreementVersionDate)+"')")
+                        print(CreateOrders)
                         cursor.execute(CreateOrders)
                         conn.commit()
                         OrderID = cursor.lastrowid
@@ -3067,6 +3087,7 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                         logger_sqlalchemy.info(
                             "In order table new entry added with " + str(OrderID) + " as id.")
                         # OrderID = 11110
+                        print("Order id",OrderID)
                         UserID = userId
                         OSUSR_BOL_CONTROLTICKER_ISIN_ID = Order_Changes(OrderID, UserID, TimeCreation=ctime,
                                                                         TickerISIN=TickerISIN,
