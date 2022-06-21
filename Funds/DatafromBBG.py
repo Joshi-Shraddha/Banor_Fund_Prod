@@ -12,7 +12,7 @@ def findbyBBGws01(Ticker):
     # Ticker = 'AAPL US Equity'
     print('findbyBBGws01')
     print('Ticker: ', Ticker)
-    response = requests.get("http://172.16.20.90:8080/InstrumentInfo", params={"Code": Ticker})
+    response = requests.get("http://172.16.20.10:8080/InstrumentInfo", params={"Code": Ticker})
 
     if response.status_code != 200:
         print('BGG is down!')

@@ -72,6 +72,11 @@ def Http_Server_wst01(TickerISIN, fund):
         values = findbyBBGws01(TickerISIN)
     except:
         values = get_bbg_records(TickerISIN, fund)
+    # try:
+    #     values = findbyBBGws01(TickerISIN)
+    #     raise ValueError('BGG is down')
+    # except (ValueError, IndexError):
+    #     values = get_bbg_records(TickerISIN, fund)
     value_dict = {}
     try:
         if values != 'BBG Workstation Down':
@@ -117,7 +122,7 @@ def Http_Server_wst01(TickerISIN, fund):
             Maturity_Date_Estimated = values[51]
             Next_Call_Dt = values[52]
             Delta = str(Hex_To_Decimal(values[9]))
-            Opt_Put_Call = str(Hex_To_Decimal(values[38]))
+            Opt_Put_Call = str(Hex_To_Decimal(values[38] if values[38] != '' else 0))
             Error = values[43]
             Industry_Group = values[33]
             Industry_Sector = values[11]
@@ -2487,8 +2492,8 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                             bbg_MaturityDate) + "', [NEXT_CALL_DT] = '" + str(
                             bbg_Next_Call_Dt) + "' Where ([TICKERREQUESTED] = '" + str(TickerISIN) + "')")
                         print(updateContrTick)
-                        # cursor.execute(updateContrTick)
-                        # conn.commit()
+                        cursor.execute(updateContrTick)
+                        conn.commit()
                     else:
                         iGetControlTickerISINsByTickerRequested = (
                                 "INSERT INTO [outsys_prod].DBO.[OSUSR_BOL_CONTROLTICKER_ISIN]([BOLEANAPIREQUESTSENT],"
