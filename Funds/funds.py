@@ -2930,7 +2930,8 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                     TradeQuantityPreciseIndicated) + ",[DB_LASTPRICE]='" + str(
                                     lastPrice) + "',[Currency]='" + str(bbgCrncy) + "',[IsRepo]='" + str(
                                     IsRepo) + "',[StrategyID] = " + StretegyID + ",[RepoExpiryDate] = '" + str(
-                                    RepoExpiryDate) + "'	 WHERE [ID] = '" + str(
+                                    RepoExpiryDate) + "',[ORDERSTAGE] = '"+str(
+                                    OrderStage)+"'	 WHERE [ID] = '" + str(
                                     LineID) + "'")
                                 cursor.execute(Update_query)
                                 conn.commit()
@@ -2971,7 +2972,8 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                     xPairTrade) + "', [SECURITYTYPE]='" + str(
                                     ProductType_2ndCol) + "', [Quantity]=" + str(
                                     TradeQuantityPreciseIndicated) + ",[DB_LASTPRICE]='" + str(
-                                    lastPrice) + "',[Currency]='" + str(bbgCrncy) + "' WHERE [ID] = '" + str(
+                                    lastPrice) + "',[Currency]='" + str(bbgCrncy) + "',[ORDERSTAGE] = '"+str(
+                                    OrderStage)+"' WHERE [ID] = '" + str(
                                     LineID) + "'")
                                 cursor.execute(Update_query)
                                 conn.commit()
