@@ -622,15 +622,15 @@ def Order_Type_A_B(IDcontactSuggestedBroker):
 
     """
     if IDcontactSuggestedBroker is not None or IDcontactSuggestedBroker != 0:
-        BrokerType_A_B = "B"
-        NeedComment = True
-        BrokerSelReason = "Selected by the user, additional information needed."
-        ExecutorFactor_Cost = 0
-    else:
         BrokerType_A_B = "A"
         NeedComment = False
         BrokerSelReason = "System automatic selection"
         ExecutorFactor_Cost = 10
+    else:
+        BrokerType_A_B = "B"
+        NeedComment = True
+        BrokerSelReason = "Selected by the user, additional information needed."
+        ExecutorFactor_Cost = 0
     return BrokerType_A_B, NeedComment, BrokerSelReason, ExecutorFactor_Cost
 
 
@@ -3067,7 +3067,9 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                                                                      "[ORDERQTYVALUE],[OPERATOR],[INSTRUCTIONS],"
                                                                      "[isrepo],[BROKERSELMETHOD],[LevEuroSettleDate],"
                                                                      "[LeiReportingCode],[REPO_CodeContrepartie],"
-                                                                     "[BrokerCode],[MasterAgreement],[MasterAgreementVersion_date]) VALUES ('" + str(
+                                                                     "[BrokerCode],[MasterAgreement],"
+                                                                     "[MasterAgreementVersion_date],[OrderStageOwl],"
+                                                                     "[bbgExchange],[bbgCountryISO],[SettlementDate],[BrokerCodeAuto]) VALUES ('" + str(
                             ctime) + "','" + str(TickerISIN) + "','" + str(FundCode) + "','" + str(
                             WeightActual) + "','" + str(NewTargetWeight) + "','" + str(
                             BuySellCoverShort) + "','Pending','" + str(ArborProductType) + "','" + str(
@@ -3075,17 +3077,21 @@ def Fund_Send(sStockName, TickerISIN, MultiplierQuantity, lastPrice, TradeQuanti
                             ProductType_2ndCol) + "','" + str(TickerISIN) + "','" + str(
                             Limit) + "','" + str(OrderType) + "','" + str(out_BrokerName) + "','" + str(
                             expiry) + "','Automated','" + str(Fund) + "','" + str(Custodian) + "','" + str(
-                            OrderQtyType) + "','" + str(Comment).replace("'","''") + "','" + str(Account) + "','" + str(
+                            OrderQtyType) + "','" + str(Comment).replace("'", "''") + "','" + str(
+                            Account) + "','" + str(
                             aCurrentDate) + "','" + str(FundNameShort) + "','" + str(Name) + "','" + str(
                             InstrumentType_1stCol) + "'," + str(out_BrokerID) + ",'" + str(
                             settleDate) + "','" + str(InstrumentType_1stCol) + "','" + str(
                             LineID) + "','Pending','" + str(TradeQuantityPreciseIndicated) + "','" + str(
                             bbg_Px_Last) + "','" + str(bbgCrncy) + "','" + str(FundCurrency) + "','" + str(
                             gUrgency) + "','" + str(calFx) + "','" + str(SuggestionPreciseInstruction) + "','" + str(
-                            user_given_quantity) + "','" + str(Username) + "','" + str(instructions).replace("'","''") + "',"+str(
-                            o_IsRepo)+",'"+str(BrokerType_A_B)+"','"+str(settleDate)+"','"+str(
-                            out_LeiReportingCode)+"','"+str(out_BrokerCodeLevEuro)+"','"+str(
-                            out_BrokerCodeLevEuro)+"','"+str(out_masterAgreement)+"','"+str(out_masterAgreementVersionDate)+"')")
+                            user_given_quantity) + "','" + str(Username) + "','" + str(instructions).replace("'",
+                                                                                                             "''") + "'," + str(
+                            o_IsRepo) + ",'" + str(BrokerType_A_B) + "','" + str(settleDate) + "','" + str(
+                            out_LeiReportingCode) + "','" + str(out_BrokerCodeLevEuro) + "','" + str(
+                            out_BrokerCodeLevEuro) + "','" + str(out_masterAgreement) + "','" + str(
+                            out_masterAgreementVersionDate) + "','" + str(API_Command) + "','" + str(
+                            bbg_Exchange) + "','" + str(bbg_Country_Iso) + "','"+str(bbg_SettleDate)+"','"+str(out_BrokerShortCode)+"')")
                         print(CreateOrders)
                         cursor.execute(CreateOrders)
                         conn.commit()
